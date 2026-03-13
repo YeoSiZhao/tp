@@ -23,8 +23,6 @@ public class Parser {
         case "list":
             return new ListCommand();
 
-
-
         default:
             System.out.println("Unknown command");
             return null;
