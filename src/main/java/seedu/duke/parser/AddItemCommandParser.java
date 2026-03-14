@@ -38,7 +38,7 @@ public class AddItemCommandParser {
         isLiquid = false;
     }
 
-    private void validateRequiredFields(String input, String[] fields) throws DukeException {
+    private void validateRequiredFields(String input, String... fields) throws DukeException {
         for (String field : fields) {
             if (!input.contains(field)) {
                 throw new DukeException("Missing required field: " + field);
@@ -47,7 +47,7 @@ public class AddItemCommandParser {
     }
 
     private void validateOrder(
-            String input, String[] fields) throws DukeException {
+            String input, String... fields) throws DukeException {
         int previous = -1;
 
         for (String field : fields) {
@@ -105,14 +105,10 @@ public class AddItemCommandParser {
     public Command handleFruit(
             String input) throws DukeException {
         resetFields();
-        validateRequiredFields(input, new String[]{
-                "item/", "category/", "bin/", "qty/",
-                "expiryDate/", "size/", "isRipe/"
-        });
-        validateOrder(input, new String[]{
-                "item/", "category/", "bin/", "qty/",
-                "expiryDate/", "size/", "isRipe/"
-        });
+        validateRequiredFields(input, "item/", "category/", "bin/", "qty/",
+                "expiryDate/", "size/", "isRipe/");
+        validateOrder(input, "item/", "category/", "bin/", "qty/",
+                "expiryDate/", "size/", "isRipe/");
         parseCommonFields(input);
 
         ParsedFruitFields fruitFields = FruitParser.parse(input);
@@ -126,14 +122,10 @@ public class AddItemCommandParser {
     public Command handleSnack(
             String input) throws DukeException {
         resetFields();
-        validateRequiredFields(input, new String[]{
-                "item/", "category/", "bin/", "qty/",
-                "brand/", "expiryDate/"
-        });
-        validateOrder(input, new String[]{
-                "item/", "category/", "bin/", "qty/",
-                "brand/", "expiryDate/"
-        });
+        validateRequiredFields(input, "item/", "category/", "bin/", "qty/",
+                "brand/", "expiryDate/");
+        validateOrder(input, "item/", "category/", "bin/", "qty/",
+                "brand/", "expiryDate/");
         parseCommonFields(input);
 
         ParsedSnackFields snackFields = SnackParser.parse(input);
@@ -146,14 +138,10 @@ public class AddItemCommandParser {
     public Command handleToiletries(
             String input) throws DukeException {
         resetFields();
-        validateRequiredFields(input, new String[]{
-                "item/", "category/", "bin/", "qty/",
-                "brand/", "isLiquid/"
-        });
-        validateOrder(input, new String[]{
-                "item/", "category/", "bin/", "qty/",
-                "brand/", "isLiquid/"
-        });
+        validateRequiredFields(input, "item/", "category/", "bin/", "qty/",
+                "brand/", "isLiquid/");
+        validateOrder(input, "item/", "category/", "bin/", "qty/",
+                "brand/", "isLiquid/");
         parseCommonFields(input);
 
         ParsedToiletriesFields toiletriesFields = ToiletriesParser.parse(input);
@@ -166,14 +154,10 @@ public class AddItemCommandParser {
     public Command handleVegetables(
             String input) throws DukeException {
         resetFields();
-        validateRequiredFields(input, new String[]{
-                "item/", "category/", "bin/", "qty/",
-                "expiryDate/", "isLeafy/"
-        });
-        validateOrder(input, new String[]{
-                "item/", "category/", "bin/", "qty/",
-                "expiryDate/", "isLeafy/"
-        });
+        validateRequiredFields(input, "item/", "category/", "bin/", "qty/",
+                "expiryDate/", "isLeafy/");
+        validateOrder(input, "item/", "category/", "bin/", "qty/",
+                "expiryDate/", "isLeafy/");
         parseCommonFields(input);
 
         ParsedVegetableFields vegetableFields = VegetableParser.parse(input);
