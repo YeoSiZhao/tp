@@ -36,8 +36,5 @@ public class DeleteCategoryCommand extends Command {
             category.getItems().clear();
             ui.showCategoryItemsCleared(categoryName);
         }
-
-        inventory.getCategories().remove(category);
-        ui.showCategoryDeleted(categoryName);
     }
 }
