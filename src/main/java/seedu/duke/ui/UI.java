@@ -218,11 +218,11 @@ public class UI {
         System.out.println("    add item/ITEM "
                 + "category/toiletries bin/BIN qty/QTY");
         System.out.println("        "
-                + "brand/BRAND isLiquid/BOOL");
+                + "brand/BRAND isLiquid/BOOL expiryDate/DATE");
         System.out.println("    e.g. add item/shampoo "
                 + "category/toiletries bin/E-02 qty/15");
         System.out.println("         "
-                + "brand/Dove isLiquid/true");
+                + "brand/Dove isLiquid/true expiryDate/2026-10-03");
         System.out.println();
         System.out.println("  --- Other Commands ---");
         System.out.println();
