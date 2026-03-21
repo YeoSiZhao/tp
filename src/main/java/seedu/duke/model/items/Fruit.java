@@ -42,8 +42,8 @@ public class Fruit extends Item {
     @Override
     public String toString() {
         return "[Fruit] " + super.toString()
-                + ", Expiry: " + expiryDate
                 + ", Size: " + size
-                + ", Ripe: " + isRipe;
+                + ", Ripe: " + isRipe
+                + ", Expiry: " + expiryDate;
     }
 }
