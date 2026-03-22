@@ -20,54 +20,63 @@ public class AddCommandParser {
         assert input != null : "AddCommandParser received null input.";
         logger.log(Level.FINE, "Parsing add command input.");
 
+        String trimmedInput = getTrimmedInput(input);
+        validateRequiredFields(trimmedInput);
+
+        String category = extractCategory(trimmedInput);
+        logger.log(Level.INFO, "Processing add command for category: " + category);
+        return parseByCategory(trimmedInput, category);
+    }
+
+    private String getTrimmedInput(String input) throws DukeException {
         String trimmedInput = input.trim();
         if (trimmedInput.isEmpty()) {
             logger.log(Level.WARNING, "Add command input is empty.");
             throw new DukeException("Input is empty.");
         }
+        return trimmedInput;
+    }
 
-        String[] tokens = trimmedInput.split(" ");
-
-        String itemName = null;
-        String category = null;
-
-        for (String token : tokens) {
-
-            if (token.startsWith("item/")) {
-                itemName = token.substring("item/".length()).trim();
-            }
-
-            if (token.startsWith("category/")) {
-                category = token.substring("category/".length()).trim().toLowerCase();
-            }
-
-            if (itemName != null && category != null) {
-                break;
-            }
-        }
-
+    private void validateRequiredFields(String input) throws DukeException {
+        String itemName = extractFieldValue(input, "item/");
         if (itemName == null || itemName.isEmpty()) {
             logger.log(Level.WARNING, "Missing item name in add command.");
             throw new DukeException("Missing item name.");
         }
 
+        String category = extractFieldValue(input, "category/");
         if (category == null || category.isEmpty()) {
             logger.log(Level.WARNING, "Missing category in add command.");
             throw new DukeException("Missing category.");
         }
+    }
 
+    private String extractCategory(String input) {
+        return extractFieldValue(input, "category/").toLowerCase();
+    }
+
+    private String extractFieldValue(String input, String prefix) {
+        String[] tokens = input.split(" ");
+        for (String token : tokens) {
+            if (token.startsWith(prefix)) {
+                return token.substring(prefix.length()).trim();
+            }
+        }
+        return null;
+    }
+
+    private Command parseByCategory(String input, String category) throws DukeException {
         AddItemCommandParser parser = new AddItemCommandParser();
-        logger.log(Level.INFO, "Processing add command for category: " + category);
 
         switch (category) {
         case "fruits":
-            return parser.handleFruit(trimmedInput);
+            return parser.handleFruit(input);
         case "snacks":
-            return parser.handleSnack(trimmedInput);
+            return parser.handleSnack(input);
         case "toiletries":
-            return parser.handleToiletries(trimmedInput);
+            return parser.handleToiletries(input);
         case "vegetables":
-            return parser.handleVegetables(trimmedInput);
+            return parser.handleVegetables(input);
         default:
             logger.log(Level.WARNING, "Unknown add command category: " + category);
             throw new DukeException("Unknown category: " + category);
