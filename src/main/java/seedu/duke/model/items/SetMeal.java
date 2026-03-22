@@ -8,9 +8,9 @@ public class SetMeal extends Item {
     private int minToUnfreeze;
     private boolean isSpicy;
 
-
     public SetMeal(String name, int quantity, String binLocation,
-                   String expiryDate, String mealType, boolean includesDrink) {
+                   String expiryDate, String mealType, String foodSize,
+                   int minToUnfreeze, boolean isSpicy) {
         super(name, quantity, binLocation, expiryDate);
         this.mealType = mealType;
         this.foodSize = foodSize;
@@ -50,7 +50,6 @@ public class SetMeal extends Item {
         this.mealType = mealType;
     }
 
-
     @Override
     public String toString() {
         return "[SetMeal] " + super.toString()
@@ -58,6 +57,5 @@ public class SetMeal extends Item {
                 + ", Food Size: " + foodSize
                 + ", Minutes to Unfreeze the meal: " + minToUnfreeze
                 + ", Spicy: " + isSpicy;
-
     }
 }

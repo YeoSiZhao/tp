@@ -8,7 +8,7 @@ public class Seafood extends Item {
     private boolean isFrozen;
 
     public Seafood(String name, int quantity, String binLocation,
-                   String expiryDate, String seafoodType, boolean isFrozen) {
+                   String expiryDate, String seafoodType, String origin, boolean isFrozen) {
         super(name, quantity, binLocation, expiryDate);
         this.seafoodType = seafoodType;
         this.origin = origin;
@@ -43,7 +43,7 @@ public class Seafood extends Item {
     public String toString() {
         return "[Seafood] " + super.toString()
                 + ", Seafood Type: " + seafoodType
-                + ", Where does it from: " + origin
+                + ", Origin: " + origin
                 + ", Frozen: " + isFrozen;
     }
 }

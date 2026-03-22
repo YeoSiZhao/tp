@@ -11,7 +11,7 @@ public class Drinks extends Item {
 
     public Drinks(String name, int quantity, String binLocation, String expiryDate,
                   String brand, String flavour, int volume,
-                  boolean isCold, boolean isCanned, boolean isHealthy) {
+                  boolean isCold, boolean isCanned) {
         super(name, quantity, binLocation, expiryDate);
         this.brand = brand;
         this.flavour = flavour;
@@ -59,7 +59,6 @@ public class Drinks extends Item {
     public void setCanned(boolean canned) {
         isCanned = canned;
     }
-
 
     @Override
     public String toString() {

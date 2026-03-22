@@ -8,7 +8,7 @@ public class Meat extends Item {
     private boolean isFrozen;
 
     public Meat(String name, int quantity, String binLocation,
-                String expiryDate, String meatType, boolean isFrozen) {
+                String expiryDate, String meatType, String origin, boolean isFrozen) {
         super(name, quantity, binLocation, expiryDate);
         this.meatType = meatType;
         this.origin = origin;
@@ -43,7 +43,7 @@ public class Meat extends Item {
     public String toString() {
         return "[Meat] " + super.toString()
                 + ", Meat Type: " + meatType
-                + ", Where does it from: " + origin
+                + ", Origin: " + origin
                 + ", Frozen: " + isFrozen;
     }
 }
