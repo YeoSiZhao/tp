@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import seedu.duke.command.Command;
-import seedu.duke.command.FindItemByCategoryCommand;
+
 import seedu.duke.command.FindItemByExpiryDateCommand;
 import seedu.duke.ui.UI;
 

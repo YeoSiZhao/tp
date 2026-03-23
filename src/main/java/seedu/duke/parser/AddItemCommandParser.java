@@ -1,45 +1,45 @@
 package seedu.duke.parser;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import seedu.duke.command.AddItemCommand;
 import seedu.duke.command.Command;
 import seedu.duke.exception.DukeException;
-
 import seedu.duke.model.Item;
-import seedu.duke.model.items.Fruit;
-import seedu.duke.model.items.Snack;
-import seedu.duke.model.items.Toiletries;
-import seedu.duke.model.items.Vegetable;
 import seedu.duke.model.items.Accessories;
 import seedu.duke.model.items.Burger;
 import seedu.duke.model.items.Drinks;
+import seedu.duke.model.items.Fruit;
 import seedu.duke.model.items.Icecream;
 import seedu.duke.model.items.Meat;
 import seedu.duke.model.items.PetFood;
 import seedu.duke.model.items.Seafood;
 import seedu.duke.model.items.SetMeal;
+import seedu.duke.model.items.Snack;
 import seedu.duke.model.items.Sweets;
-
-import seedu.duke.parser.category.CommonFieldParser;
-import seedu.duke.parser.category.FruitParser;
-import seedu.duke.parser.category.InputValidator;
-import seedu.duke.parser.category.SnackParser;
-import seedu.duke.parser.category.ToiletriesParser;
-import seedu.duke.parser.category.VegetableParser;
+import seedu.duke.model.items.Toiletries;
+import seedu.duke.model.items.Vegetable;
 import seedu.duke.parser.category.AccessoriesParser;
 import seedu.duke.parser.category.BurgerParser;
+import seedu.duke.parser.category.CommonFieldParser;
 import seedu.duke.parser.category.DrinksParser;
+import seedu.duke.parser.category.FruitParser;
 import seedu.duke.parser.category.IcecreamParser;
+import seedu.duke.parser.category.InputValidator;
 import seedu.duke.parser.category.MeatParser;
 import seedu.duke.parser.category.PetFoodParser;
 import seedu.duke.parser.category.SeafoodParser;
 import seedu.duke.parser.category.SetMealParser;
+import seedu.duke.parser.category.SnackParser;
 import seedu.duke.parser.category.SweetsParser;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import seedu.duke.parser.category.ToiletriesParser;
+import seedu.duke.parser.category.VegetableParser;
 
 
 public class AddItemCommandParser {
+    private static final Logger logger = Logger.getLogger(AddItemCommandParser.class.getName());
+
     public Command handleFruit(String input) throws DukeException {
         assert input != null : "AddItemCommandParser received null fruit input.";
         InputValidator.validate(input, "item/", "category/", "bin/", "qty/",
@@ -226,5 +226,5 @@ public class AddItemCommandParser {
         logger.log(Level.INFO, "Created burger item command for category: " + commonFields.categoryName);
         return new AddItemCommand(commonFields.categoryName, item);
     }
-    
+
 }
