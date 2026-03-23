@@ -52,3 +52,4 @@ public class FruitParser {
         return new FruitParser(expiryDate, size, isRipe);
     }
 }
+

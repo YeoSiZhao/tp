@@ -52,3 +52,4 @@ public class ToiletriesParser {
         return new ToiletriesParser(brand, isLiquid, expiryDate);
     }
 }
+
