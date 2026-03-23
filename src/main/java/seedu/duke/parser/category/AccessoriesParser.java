@@ -1,10 +1,11 @@
 package seedu.duke.parser.category;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import seedu.duke.exception.DukeException;
 import seedu.duke.parser.DateParser;
 import seedu.duke.parser.FieldParser;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class AccessoriesParser {
     private static final Logger logger = Logger.getLogger(AccessoriesParser.class.getName());

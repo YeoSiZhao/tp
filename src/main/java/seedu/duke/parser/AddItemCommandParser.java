@@ -212,6 +212,7 @@ public class AddItemCommandParser {
         return new AddItemCommand(commonFields.categoryName, item);
     }
 
+
     public Command handleBurger(String input) throws DukeException {
         assert input != null : "AddItemCommandParser received null burger input.";
         logger.log(Level.INFO, "Parsing add-item command for burger.");
