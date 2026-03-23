@@ -11,23 +11,23 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class SeafoodParserTest {
     @Test
     public void parse_validInput_success() {
-        String input = "expiryDate/2026-03-30 seafoodType/Fish origin/Norway isFrozen/true";
+        String input = "expiryDate/2026-03-30 seafoodType/Fish origin/Norway";
         assertDoesNotThrow(() -> SeafoodParser.parse(input));
     }
 
     @Test
     public void parse_missingOrigin_throwsException() {
-        String input = "expiryDate/2026-03-30 seafoodType/Fish origin/ isFrozen/true";
+        String input = "expiryDate/2026-03-30 seafoodType/Fish origin/";
         DukeException e = assertThrows(DukeException.class,
                 () -> SeafoodParser.parse(input));
         assertEquals("Missing origin for seafood.", e.getMessage());
     }
 
     @Test
-    public void parse_invalidFrozenValue_throwsException() {
-        String input = "expiryDate/2026-03-30 seafoodType/Fish origin/Norway isFrozen/cold";
+    public void parse_missingSeafoodType_throwsException() {
+        String input = "expiryDate/2026-03-30 seafoodType/ origin/Norway";
         DukeException e = assertThrows(DukeException.class,
                 () -> SeafoodParser.parse(input));
-        assertEquals("isFrozen must be true or false", e.getMessage());
+        assertEquals("Missing seafoodType for seafood.", e.getMessage());
     }
 }
