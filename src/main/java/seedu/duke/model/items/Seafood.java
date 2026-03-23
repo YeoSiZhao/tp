@@ -5,14 +5,12 @@ import seedu.duke.model.Item;
 public class Seafood extends Item {
     private String seafoodType;
     private String origin;
-    private boolean isFrozen;
 
     public Seafood(String name, int quantity, String binLocation,
-                   String expiryDate, String seafoodType, String origin, boolean isFrozen) {
+                   String expiryDate, String seafoodType, String origin) {
         super(name, quantity, binLocation, expiryDate);
         this.seafoodType = seafoodType;
         this.origin = origin;
-        this.isFrozen = isFrozen;
     }
 
     public String getOrigin() {
