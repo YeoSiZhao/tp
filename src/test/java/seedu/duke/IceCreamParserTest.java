@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class IcecreamParserTest {
+public class IceCreamParserTest {
     @Test
     public void parse_validInput_success() {
         String input = "expiryDate/2026-03-28 flavour/Vanilla isDairyFree/false";

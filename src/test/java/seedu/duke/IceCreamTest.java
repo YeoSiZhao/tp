@@ -6,7 +6,7 @@ import seedu.duke.model.items.IceCream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class IcecreamTest {
+public class IceCreamTest {
     @Test
     public void constructor_validInput_success() {
         IceCream icecream = new IceCream("Vanilla Cup", 3, "B1",
