@@ -7,12 +7,12 @@ import seedu.duke.model.Inventory;
 import seedu.duke.parser.Parser;
 import seedu.duke.ui.UI;
 
-public class InventoryDock {
+public class Duke {
     private final Inventory inventory;
     private final UI ui;
     private final Parser parser;
 
-    public InventoryDock() {
+    public Duke() {
         ui = new UI();
         inventory = new Inventory();
         parser = new Parser(ui);
@@ -39,7 +39,7 @@ public class InventoryDock {
     }
 
     public static void main(String[] args) throws DukeException {
-        new InventoryDock().run();
+        new Duke().run();
     }
 
     public void run() throws DukeException {
