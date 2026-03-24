@@ -15,7 +15,6 @@ public class FindItemByCategoryCommand extends Command {
     private static final Logger logger = Logger.getLogger(FindItemByCategoryCommand.class.getName());
     private final String categoryInput;
 
-
     public FindItemByCategoryCommand(String categoryInput) {
         this.categoryInput = categoryInput;
     }
