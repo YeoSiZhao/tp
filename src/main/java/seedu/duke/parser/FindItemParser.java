@@ -1,6 +1,7 @@
 package seedu.duke.parser;
 
 import seedu.duke.command.Command;
+import seedu.duke.command.FindItemByKeywordCommand;
 import seedu.duke.command.FindItemByCategoryCommand;
 import seedu.duke.command.FindItemByExpiryDateCommand;
 import seedu.duke.ui.UI;
@@ -42,19 +43,19 @@ public class FindItemParser {
         String name = parts[1].trim().toLowerCase();
 
         switch (type) {
-        case "keyword":
-//            return new findItemByKeywordCommand(name);
-        case "category":
-            return new FindItemByCategoryCommand(name);
-        case "expirydate":
-            return new FindItemByExpiryDateCommand(name);
-        default:
-            logger.log(Level.WARNING, "Unknown find type: " + type);
-            ui.showInvalidInput("Unknown find type: '" + type
-                    + "Use: find item/ITEM "
-                    + "or find category/CATEGORY"
-                    + "or find expiryDate/DATE");
-            return null;
+            case "keyword":
+                return new FindItemByKeywordCommand(name);
+            case "category":
+                return new FindItemByCategoryCommand(name);
+            case "expirydate":
+                return new FindItemByExpiryDateCommand(name);
+            default:
+                logger.log(Level.WARNING, "Unknown find type: " + type);
+                ui.showInvalidInput("Unknown find type: '" + type
+                        + "Use: find item/ITEM "
+                        + "or find category/CATEGORY"
+                        + "or find expiryDate/DATE");
+                return null;
         }
     }
 }
