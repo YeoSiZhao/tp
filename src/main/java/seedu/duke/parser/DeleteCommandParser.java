@@ -14,9 +14,7 @@ import java.util.logging.Logger;
  * deleting an entire category.
  */
 public class DeleteCommandParser {
-    private static final Logger logger =
-            Logger.getLogger(
-                    DeleteCommandParser.class.getName());
+    private static final Logger logger = Logger.getLogger(DeleteCommandParser.class.getName());
 
     private final UI ui;
 
@@ -42,16 +40,11 @@ public class DeleteCommandParser {
      * @return The parsed Command, or null if input is invalid.
      */
     public Command parse(String input) {
-        assert input != null
-                : "DeleteCommandParser received null input.";
+        assert input != null : "DeleteCommandParser received null input.";
         if (input.isEmpty()) {
-            logger.log(Level.WARNING,
-                    "Delete command missing target.");
-            ui.showInvalidInput(
-                    "Please specify what to delete. "
-                            + "Use: delete category/CATEGORY "
-                            + "index/INDEX "
-                            + "or delete category/CATEGORY");
+            logger.log(Level.WARNING, "Delete command missing target.");
+            ui.showInvalidInput("Please specify what to delete. " + "Use: delete category/CATEGORY "
+                    + "index/INDEX " + "or delete category/CATEGORY");
             return null;
         }
 
@@ -62,17 +55,12 @@ public class DeleteCommandParser {
         for (String token : tokens) {
             int sep = token.indexOf('/');
             if (sep <= 0 || sep == token.length() - 1) {
-                logger.log(Level.WARNING,
-                        "Invalid delete token: " + token);
-                ui.showInvalidInput(
-                        "Invalid token: '" + token
-                                + "'. Use: delete "
-                                + "category/CATEGORY index/INDEX "
-                                + "or delete category/CATEGORY");
+                logger.log(Level.WARNING, "Invalid delete token: " + token);
+                ui.showInvalidInput("Invalid token: '" + token + "'. Use: delete "
+                        + "category/CATEGORY index/INDEX " + "or delete category/CATEGORY");
                 return null;
             }
-            String key = token.substring(0, sep)
-                    .trim().toLowerCase();
+            String key = token.substring(0, sep).trim().toLowerCase();
             String value = token.substring(sep + 1).trim();
 
             switch (key) {
@@ -83,26 +71,17 @@ public class DeleteCommandParser {
                 indexString = value;
                 break;
             default:
-                logger.log(Level.WARNING,
-                        "Unknown delete field: " + key);
-                ui.showInvalidInput(
-                        "Unknown field: '" + key
-                                + "'. Use: delete "
-                                + "category/CATEGORY index/INDEX "
-                                + "or delete category/CATEGORY");
+                logger.log(Level.WARNING, "Unknown delete field: " + key);
+                ui.showInvalidInput("Unknown field: '" + key + "'. Use: delete "
+                        + "category/CATEGORY index/INDEX " + "or delete category/CATEGORY");
                 return null;
             }
         }
 
-        if (categoryName == null
-                || categoryName.isEmpty()) {
-            logger.log(Level.WARNING,
-                    "Delete command missing category.");
-            ui.showInvalidInput(
-                    "Missing category. "
-                            + "Use: delete category/CATEGORY "
-                            + "index/INDEX "
-                            + "or delete category/CATEGORY");
+        if (categoryName == null || categoryName.isEmpty()) {
+            logger.log(Level.WARNING, "Delete command missing category.");
+            ui.showInvalidInput("Missing category. " + "Use: delete category/CATEGORY " + "index/INDEX "
+                    + "or delete category/CATEGORY");
             return null;
         }
 
@@ -129,18 +108,14 @@ public class DeleteCommandParser {
         try {
             itemIndex = Integer.parseInt(indexString);
         } catch (NumberFormatException e) {
-            logger.log(Level.WARNING,
-                    "Non-integer index: " + indexString);
-            ui.showInvalidInput(
-                    "Item index must be an integer.");
+            logger.log(Level.WARNING, "Non-integer index: " + indexString);
+            ui.showInvalidInput("Item index must be an integer.");
             return null;
         }
 
         if (itemIndex <= 0) {
-            logger.log(Level.WARNING,
-                    "Non-positive index: " + itemIndex);
-            ui.showInvalidInput(
-                    "Item index must be a positive integer.");
+            logger.log(Level.WARNING, "Non-positive index: " + itemIndex);
+            ui.showInvalidInput("Item index must be a positive integer.");
             return null;
         }
 

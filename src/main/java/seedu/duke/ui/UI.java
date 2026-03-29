@@ -79,8 +79,7 @@ public class UI {
     }
 
     public void showUnknownCommand() {
-        showError("Unknown command. "
-                + "Type 'help' to see available commands.");
+        showError("Unknown command. " + "Type 'help' to see available commands.");
     }
 
     public void showCategoryNotFound(String categoryName) {
@@ -93,16 +92,13 @@ public class UI {
     }
 
     public void showEmptyInput() {
-        showError("Input cannot be empty. "
-                + "Type 'help' to see available commands.");
+        showError("Input cannot be empty. " + "Type 'help' to see available commands.");
     }
 
     public void showItemAdded(String itemName, int quantity,
                               String categoryName, String bin) {
         showDivider();
-        System.out.println("Added item: " + itemName
-                + " (qty: " + quantity + ")"
-                + " to category: " + categoryName
+        System.out.println("Added item: " + itemName + " (qty: " + quantity + ")" + " to category: " + categoryName
                 + " at bin: " + bin);
         showDivider();
     }
@@ -110,8 +106,7 @@ public class UI {
     public void showItemDeleted(String itemName,
                                 String categoryName) {
         showDivider();
-        System.out.println("Deleted item: " + itemName
-                + " from category: " + categoryName);
+        System.out.println("Deleted item: " + itemName + " from category: " + categoryName);
         showDivider();
     }
 
@@ -119,8 +114,7 @@ public class UI {
                                 String newItemName,
                                 String categoryName) {
         showDivider();
-        System.out.println("Updated item: " + oldItemName
-                + " in category: " + categoryName);
+        System.out.println("Updated item: " + oldItemName + " in category: " + categoryName);
         if (!oldItemName.equals(newItemName)) {
             System.out.println("New item name: " + newItemName);
         }
@@ -140,22 +134,18 @@ public class UI {
     public void showDeleteCategoryConfirmation(
             String categoryName, int itemCount) {
         showDivider();
-        System.out.println("Category '" + categoryName
-                + "' still has " + itemCount + " item(s).");
-        System.out.println("Are you sure you want to delete "
-                + "all items and remove this category?");
+        System.out.println("Category '" + categoryName + "' still has " + itemCount + " item(s).");
+        System.out.println("Are you sure you want to delete " + "all items and remove this category?");
         System.out.print("Type 'yes' to confirm: ");
     }
 
     public void showDeleteCategoryCancelled(
             String categoryName) {
-        System.out.println("Cancelled. Category '"
-                + categoryName + "' was not deleted.");
+        System.out.println("Cancelled. Category '" + categoryName + "' was not deleted.");
     }
 
     public void showCategoryItemsCleared(String categoryName) {
-        System.out.println("Cleared all items from category: "
-                + categoryName);
+        System.out.println("Cleared all items from category: " + categoryName);
     }
 
     public void showInventory(Inventory inventory) {
@@ -169,12 +159,10 @@ public class UI {
         System.out.println();
         for (int i = 0; i < categories.size(); i++) {
             Category cat = categories.get(i);
-            System.out.println((i + 1) + ". " + capitalise(cat.getName())
-                    + " (" + cat.getItemCount() + " items)");
+            System.out.println((i + 1) + ". " + capitalise(cat.getName()) + " (" + cat.getItemCount() + " items)");
             List<Item> items = cat.getItems();
             for (int j = 0; j < items.size(); j++) {
-                System.out.println("   " + (j + 1)
-                        + ". " + items.get(j));
+                System.out.println("   " + (j + 1) + ". " + items.get(j));
             }
         }
         showDivider();
@@ -189,13 +177,10 @@ public class UI {
 
     public void showHelp() {
         showDivider();
-        System.out.println("Available commands: "
-                + "add, delete, update, find, list, help, bye");
+        System.out.println("Available commands: " + "add, delete, update, find, list, help, bye");
         System.out.println();
-        System.out.println("For detailed usage and examples, "
-                + "refer to our User Guide:");
-        System.out.println("https://ay2425s2-cs2113-w09-2.github.io"
-                + "/tp/UserGuide.html");
+        System.out.println("For detailed usage and examples, " + "refer to our User Guide:");
+        System.out.println("https://ay2425s2-cs2113-w09-2.github.io/tp/UserGuide.html");
         showDivider();
     }
 

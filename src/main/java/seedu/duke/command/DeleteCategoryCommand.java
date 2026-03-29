@@ -42,8 +42,7 @@ public class DeleteCategoryCommand extends Command {
         assert inventory != null : "DeleteCategoryCommand received null inventory.";
         assert ui != null : "DeleteCategoryCommand received null UI.";
         assert categoryName != null : "DeleteCategoryCommand received null category name.";
-        Category category = inventory.findCategoryByName(
-                categoryName);
+        Category category = inventory.findCategoryByName(categoryName);
 
         if (category == null) {
             logger.log(Level.WARNING, "Category not found for deletion: " + categoryName);
@@ -52,13 +51,10 @@ public class DeleteCategoryCommand extends Command {
         }
 
         if (!category.isEmpty()) {
-            ui.showDeleteCategoryConfirmation(
-                    categoryName, category.getItemCount());
+            ui.showDeleteCategoryConfirmation(categoryName, category.getItemCount());
             String response = ui.readCommand();
 
-            if (response == null
-                    || !response.trim()
-                    .equalsIgnoreCase("yes")) {
+            if (response == null || !response.trim().equalsIgnoreCase("yes")) {
                 logger.log(Level.INFO, "Category deletion cancelled for: " + categoryName);
                 ui.showDeleteCategoryCancelled(categoryName);
                 return;

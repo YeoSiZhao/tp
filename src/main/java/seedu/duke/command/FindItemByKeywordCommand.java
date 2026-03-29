@@ -64,8 +64,7 @@ public class FindItemByKeywordCommand extends Command {
             return;
         }
 
-        logger.log(Level.INFO, "Found " + matches.size()
-                + " item(s) matching keyword '" + keywordInput + "'.");
+        logger.log(Level.INFO, "Found " + matches.size() + " item(s) matching keyword '" + keywordInput + "'.");
 
         ui.showDivider();
         ui.showMessage("Items matching keyword '" + keywordInput + "':");

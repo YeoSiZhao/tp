@@ -13,8 +13,7 @@ import java.util.logging.Logger;
  * category by its index.
  */
 public class DeleteItemCommand extends Command {
-    private static final Logger logger =
-            Logger.getLogger(DeleteItemCommand.class.getName());
+    private static final Logger logger = Logger.getLogger(DeleteItemCommand.class.getName());
 
     private final String categoryName;
     private final int itemIndex;
@@ -43,30 +42,21 @@ public class DeleteItemCommand extends Command {
      */
     @Override
     public void execute(Inventory inventory, UI ui) {
-        assert inventory != null
-                : "DeleteItemCommand received null inventory.";
-        assert ui != null
-                : "DeleteItemCommand received null UI.";
-        assert categoryName != null
-                : "DeleteItemCommand received null category name.";
+        assert inventory != null : "DeleteItemCommand received null inventory.";
+        assert ui != null : "DeleteItemCommand received null UI.";
+        assert categoryName != null : "DeleteItemCommand received null category name.";
 
-        Category category =
-                inventory.findCategoryByName(categoryName);
+        Category category = inventory.findCategoryByName(categoryName);
 
         if (category == null) {
-            logger.log(Level.WARNING,
-                    "Category not found for deletion: "
-                            + categoryName);
+            logger.log(Level.WARNING, "Category not found for deletion: " + categoryName);
             ui.showCategoryNotFound(categoryName);
             return;
         }
 
-        if (itemIndex < 1
-                || itemIndex > category.getItemCount()) {
-            logger.log(Level.WARNING,
-                    "Invalid item index: " + itemIndex);
-            ui.showError("Invalid item index: " + itemIndex
-                    + ". Category '" + categoryName
+        if (itemIndex < 1 || itemIndex > category.getItemCount()) {
+            logger.log(Level.WARNING, "Invalid item index: " + itemIndex);
+            ui.showError("Invalid item index: " + itemIndex + ". Category '" + categoryName
                     + "' has " + category.getItemCount()
                     + " item(s).");
             return;
@@ -74,10 +64,8 @@ public class DeleteItemCommand extends Command {
 
         Item item = category.getItem(itemIndex - 1);
         category.removeItem(itemIndex - 1);
-        logger.log(Level.INFO, "Deleted item '"
-                + item.getName() + "' from category '"
+        logger.log(Level.INFO, "Deleted item '" + item.getName() + "' from category '"
                 + category.getName() + "'.");
-        ui.showItemDeleted(item.getName(),
-                category.getName());
+        ui.showItemDeleted(item.getName(), category.getName());
     }
 }
