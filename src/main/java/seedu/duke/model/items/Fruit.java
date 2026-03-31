@@ -17,7 +17,7 @@ public class Fruit extends Item {
      * @param binLocation Storage bin location.
      * @param expiryDate Expiry date.
      * @param size Size of the fruit.
-     * @param isRipe Whether the fruit is ripe.
+     * @param isRipe Check whether the fruit is ripe.
      */
     public Fruit(String name, int quantity, String binLocation,
                  String expiryDate, String size, boolean isRipe) {

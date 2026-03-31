@@ -17,7 +17,7 @@ public class IceCream extends Item {
      * @param binLocation Storage bin location.
      * @param expiryDate Expiry date.
      * @param flavour Flavour of the ice cream.
-     * @param isDairyFree Whether the ice cream is dairy-free.
+     * @param isDairyFree Check whether the ice cream is dairy-free.
      */
     public IceCream(String name, int quantity, String binLocation,
                     String expiryDate, String flavour, boolean isDairyFree) {

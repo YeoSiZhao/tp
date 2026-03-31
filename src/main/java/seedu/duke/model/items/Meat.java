@@ -19,7 +19,7 @@ public class Meat extends Item {
      * @param expiryDate Expiry date.
      * @param meatType Type of meat.
      * @param origin Origin of the meat.
-     * @param isFrozen check the frozen state of meat
+     * @param isFrozen Check the frozen state of meat
      */
     public Meat(String name, int quantity, String binLocation,
                 String expiryDate, String meatType,

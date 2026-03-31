@@ -19,7 +19,7 @@ public class Drinks extends Item {
      * @param expiryDate Expiry date.
      * @param brand Brand of the drink.
      * @param flavour Flavour of the drink.
-     * @param isCarbonated check if the drink is carbonated
+     * @param isCarbonated Check if the drink is carbonated
      */
     public Drinks(String name, int quantity, String binLocation, String expiryDate,
                   String brand, String flavour, boolean isCarbonated) {
