@@ -1,0 +1,90 @@
+# Luke Louyu - Project Portfolio Page
+
+## Overview
+
+InventoryDock is a Java-based command-line inventory management application designed for users who prefer fast and structured keyboard input. The application allows users to organise inventory by category, record key item details such as quantity, bin location, and expiry date, and manage stored items through commands such as `add`, `update`, and `find`.
+
+My main contributions focused on extending the project’s inventory model and strengthening the command-processing flow for category-based items. In particular, I worked on implementing item subclasses for different inventory categories, building category-specific parsers for structured input, and integrating these parsers into the item-creation workflow. I also contributed to code quality improvements through testing, JavaDocs, and style-compliance fixes. These changes made the codebase more modular, more robust against invalid input, and better aligned with object-oriented design.
+
+### Summary of Contributions
+
+My contributions focused on extending InventoryDock’s category-based inventory system and strengthening its command-processing flow. I implemented multiple category-specific item subclasses under `model/items`, allowing the application to represent different inventory types with their own attributes instead of relying on a single generic item structure. I also contributed to the core `Category` and `Inventory` classes, which organise items within a hierarchical model and support operations such as adding, searching, removing, and displaying inventory data.
+
+In addition, I implemented category-specific parsers under `parser/category` to extract and validate item-type-specific fields from user input. These parsers improve modularity by separating category-level validation from the main command parser, making the codebase easier to maintain and extend. I also updated `AddItemCommandParser` to integrate these parsers into the item-creation workflow through dedicated handler methods for the newly supported categories. Beyond implementation, I contributed to code quality improvements through JavaDocs, testing, and style-compliance fixes, helping make the project more robust and maintainable.
+
+### code contributed ###
+https://nus-cs2113-ay2526-s2.github.io/tp-dashboard/?search=w09&sort=groupTitle&sortWithin=title&timeframe=commit&mergegroup=&groupSelect=groupByRepos&breakdown=true&checkedFileTypes=docs~functional-code~test-code~other&since=2026-02-20T00%3A00%3A00&filteredFileName=&tabOpen=true&tabType=authorship&tabAuthor=lukelouyu&tabRepo=AY2526S2-CS2113-W09-2%2Ftp%5Bmaster%5D&authorshipIsMergeGroup=false&authorshipFileTypes=functional-code&authorshipIsBinaryFileTypeChecked=false&authorshipIsIgnoredFilesChecked=false
+
+
+### Extended the item model with category-specific item classes
+
+I implemented the item subclasses under `src/main/java/seedu/duke/model/items` to support different inventory categories:
+
+- `Accessories.java`
+- `Burger.java`
+- `Drinks.java`
+- `Fruit.java`
+- `IceCream.java`
+- `Meat.java`
+- `PetFood.java`
+- `Seafood.java`
+- `SetMeal.java`
+- `Snack.java`
+- `Sweets.java`
+- `Toiletries.java`
+- `Vegetable.java`
+
+These classes extend the base `Item` class and allow each category to store its own category-specific attributes. Each subclass includes constructors, getters, and setters, as well as methods for converting objects into user-friendly display strings and storage-friendly string formats. This improves the expressiveness of the inventory system by allowing different item types to be represented more meaningfully instead of relying on a single generic item structure.
+
+### Implemented the core inventory model structure
+
+I contributed to the implementation of the core inventory model through `Category.java` and `Inventory.java`.
+
+`Category.java` represents a single item category in the system. It stores the category name and a list of items, and provides methods to add, remove, search, count, and display items within that category.
+
+`Inventory.java` acts as the top-level manager for the full inventory. It stores the list of categories and provides methods to add, retrieve, search, count, and display categories. Together, these classes establish the hierarchical structure of the inventory system:
+
+`Inventory -> Category -> Item`
+
+This improves the organisation of the data model and supports a clearer separation of responsibilities across the codebase.
+
+### Implemented category-specific parsers for structured item input
+
+I implemented the category-specific parsers under `src/main/java/seedu/duke/parser/category` to support parsing and validation of item-type-specific fields:
+
+- `AccessoriesParser.java`
+- `BurgerParser.java`
+- `DrinksParser.java`
+- `FruitParser.java`
+- `IceCreamParser.java`
+- `MeatParser.java`
+- `PetFoodParser.java`
+- `SeafoodParser.java`
+- `SnackParser.java`
+- `SweetsParser.java`
+- `ToiletriesParser.java`
+- `VegetableParser.java`
+
+These parser classes are responsible for extracting category-specific fields from raw user input, validating required values, detecting malformed input, and returning structured parsed results for item creation. This modularises the parsing logic by keeping category-specific validation separate from the main command parser, which improves maintainability and makes the application easier to extend with new inventory item types in the future.
+
+### Updated `AddItemCommandParser` to support the new categories
+
+I updated `AddItemCommandParser.java` to integrate the category-specific parsers into the item-creation workflow. This included adding category-handling methods such as:
+
+- `handleDrinks(String input)`
+- `handleIceCream(String input)`
+- `handleSweets(String input)`
+- `handleSetMeal(String input)`
+- `handleSeafood(String input)`
+- `handleMeat(String input)`
+- `handlePetFood(String input)`
+- `handleAccessories(String input)`
+- `handleBurger(String input)`
+
+These methods allow the system to correctly parse category-dependent input and construct the corresponding item objects. This improves the extensibility of the add-command flow and ensures that category-specific item creation is handled in a structured and consistent way.
+
+### Improved code quality and maintainability
+
+In addition to implementation work, I contributed to improving the overall quality of the codebase through testing, JavaDocs, and style-related fixes. This helped ensure that the new inventory features were easier to understand, easier to maintain, and better aligned with project coding standards.
+
+
