@@ -4,7 +4,6 @@
 
 InventoryDock is a Java-based command-line inventory management application designed for users who prefer fast and structured keyboard input. The application allows users to organise inventory by category, record key item details such as quantity, bin location, and expiry date, and manage stored items through commands such as `add`, `update`, and `find`.
 
-My main contributions focused on extending the project’s inventory model and strengthening the command-processing flow for category-based items. In particular, I worked on implementing item subclasses for different inventory categories, building category-specific parsers for structured input, and integrating these parsers into the item-creation workflow. I also contributed to code quality improvements through testing, JavaDocs, and style-compliance fixes. These changes made the codebase more modular, more robust against invalid input, and better aligned with object-oriented design.
 
 ### Summary of Contributions
 
