@@ -128,7 +128,6 @@ Format: `sort SORT_TYPE`
 
 Parameters:
 * `SORT_TYPE`: The field to sort by. Valid values are:
-  * `name` - Sort items alphabetically by name (case-insensitive)
   * `expirydate` - Sort items by expiry date (earliest first)
   * `qty` - Sort items by quantity (highest first)
 
