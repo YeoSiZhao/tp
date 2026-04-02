@@ -8,11 +8,10 @@ My main contributions focused on extending the project’s inventory model and s
 
 ### Summary of Contributions
 
-My contributions focused on extending InventoryDock’s category-based inventory system and strengthening its command-processing flow. I implemented multiple category-specific item subclasses under `model/items`, allowing the application to represent different inventory types with their own attributes instead of relying on a single generic item structure. I also contributed to the core `Category` and `Inventory` classes, which organise items within a hierarchical model and support operations such as adding, searching, removing, and displaying inventory data.
-
-In addition, I implemented category-specific parsers under `parser/category` to extract and validate item-type-specific fields from user input. These parsers improve modularity by separating category-level validation from the main command parser, making the codebase easier to maintain and extend. I also updated `AddItemCommandParser` to integrate these parsers into the item-creation workflow through dedicated handler methods for the newly supported categories. Beyond implementation, I contributed to code quality improvements through JavaDocs, testing, and style-compliance fixes, helping make the project more robust and maintainable.
+My main contributions focused on extending the project’s category-based inventory support and strengthening the command-processing flow for newly added item types. In particular, I implemented and refined category-specific item classes, built and integrated category-specific parsers for structured user input, and contributed to the supporting inventory model through `Category` and `Inventory`. I also contributed test code, JavaDocs, and style-compliance fixes, helping make the codebase more modular, more robust against invalid input, and easier to maintain.
 
 ### code contributed ###
+
 https://nus-cs2113-ay2526-s2.github.io/tp-dashboard/?search=w09&sort=groupTitle&sortWithin=title&timeframe=commit&mergegroup=&groupSelect=groupByRepos&breakdown=true&checkedFileTypes=docs~functional-code~test-code~other&since=2026-02-20T00%3A00%3A00&filteredFileName=&tabOpen=true&tabType=authorship&tabAuthor=lukelouyu&tabRepo=AY2526S2-CS2113-W09-2%2Ftp%5Bmaster%5D&authorshipIsMergeGroup=false&authorshipFileTypes=functional-code&authorshipIsBinaryFileTypeChecked=false&authorshipIsIgnoredFilesChecked=false
 
 
@@ -86,5 +85,4 @@ These methods allow the system to correctly parse category-dependent input and c
 ### Improved code quality and maintainability
 
 In addition to implementation work, I contributed to improving the overall quality of the codebase through testing, JavaDocs, and style-related fixes. This helped ensure that the new inventory features were easier to understand, easier to maintain, and better aligned with project coding standards.
-
 
