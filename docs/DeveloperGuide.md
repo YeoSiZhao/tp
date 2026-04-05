@@ -250,15 +250,15 @@ follows:
 
 The main interaction for this flow is illustrated below.
 
-![FindItemByCategoryCommandMainFlow](diagrams/sequenceDiagrams/FindItemByCategoryCommandMainFlow-Sequence_Diagram_for_FindItemByCategoryCommand__Main_Control_Flow_Only_.png)
+![FindItemByCategoryCommandMainFlow](diagrams/sequence/FindItemByCategoryCommandMainFlow-Sequence_Diagram_for_FindItemByCategoryCommand__Main_Control_Flow_Only_.png)
 
 The main structural relationships for this feature are shown below.
 
-![FindItemByCategoryCommandClassDiagram](diagrams/classdiagrams/FindItemByCategoryCommandClassDiagram.png)
+![FindItemByCategoryCommandClassDiagram](diagrams/class/FindItemByCategoryCommandClassDiagram.png)
 
 A representative object snapshot for this feature is shown below.
 
-![FindItemByCategoryCommandObjectDiagram](diagrams/objectdiagrams/FindItemByCategoryCommandObjectDiagram.png)
+![FindItemByCategoryCommandObjectDiagram](diagrams/object/FindItemByCategoryCommandObjectDiagram.png)
 
 This design was chosen because it follows the same separation of concerns already used throughout the
 project:
@@ -423,15 +423,15 @@ is as follows:
 
 The main interaction for this flow is illustrated below.
 
-![FindItemByBinCommandMainFlow](diagrams/sequenceDiagrams/FindItemByBinCommandMainFlow-Sequence_Diagram_for_FindItemByBinCommand__Main_Control_Flow_Only_.png)
+![FindItemByBinCommandMainFlow](diagrams/sequence/FindItemByBinCommandMainFlow-Sequence_Diagram_for_FindItemByBinCommand__Main_Control_Flow_Only_.png)
 
 The main structural relationships for this feature are shown below.
 
-![FindItemByBinCommandClassDiagram](diagrams/classdiagrams/FindItemByBinCommandClassDiagram.png)
+![FindItemByBinCommandClassDiagram](diagrams/class/FindItemByBinCommandClassDiagram.png)
 
 A representative object snapshot for this feature is shown below.
 
-![FindItemByBinCommandObjectDiagram](diagrams/objectdiagrams/FindItemByBinCommandObjectDiagram.png)
+![FindItemByBinCommandObjectDiagram](diagrams/object/FindItemByBinCommandObjectDiagram.png)
 
 This design was chosen because it allows bin-specific input normalisation to remain in the parser
 layer, while the matching and display behaviour stays in the command layer.
@@ -709,15 +709,15 @@ application. The feature follows this flow:
 
 The main interaction for this flow is illustrated below.
 
-![AddItemCommandMainFlow](diagrams/sequenceDiagrams/AddItemCommandMainFlow-Sequence_Diagram_for_AddItemCommand__Main_Control_Flow_Only_.png)
+![AddItemCommandMainFlow](diagrams/sequence/AddItemCommandMainFlow-Sequence_Diagram_for_AddItemCommand__Main_Control_Flow_Only_.png)
 
 The main structural relationships for this feature are shown below.
 
-![AddItemCommandClassDiagram](diagrams/classdiagrams/AddItemCommandClassDiagram.png)
+![AddItemCommandClassDiagram](diagrams/class/AddItemCommandClassDiagram.png)
 
 A representative object snapshot for this feature is shown below.
 
-![AddItemCommandObjectDiagram](diagrams/objectdiagrams/AddItemCommandObjectDiagram.png)
+![AddItemCommandObjectDiagram](diagrams/object/AddItemCommandObjectDiagram.png)
 
 This design was chosen because it preserves the same separation of responsibilities used elsewhere
 in the codebase:
@@ -1106,15 +1106,15 @@ architecture:
 
 The main interaction for this flow is illustrated below.
 
-![ListCommandMainFlow](diagrams/sequenceDiagrams/ListCommandMainFlow-Sequence_Diagram_for_ListCommand__Main_Control_Flow_Only_.png)
+![ListCommandMainFlow](diagrams/sequence/ListCommandMainFlow-Sequence_Diagram_for_ListCommand__Main_Control_Flow_Only_.png)
 
 The main structural relationships for this feature are shown below.
 
-![ListCommandClassDiagram](diagrams/classdiagrams/ListCommandClassDiagram.png)
+![ListCommandClassDiagram](diagrams/class/ListCommandClassDiagram.png)
 
 A representative object snapshot for this feature is shown below.
 
-![ListCommandObjectDiagram](diagrams/objectdiagrams/ListCommandObjectDiagram.png)
+![ListCommandObjectDiagram](diagrams/object/ListCommandObjectDiagram.png)
 
 This design was chosen because listing inventory does not require separate parsing logic beyond
 recognising the command word. The command object acts mainly as a bridge between the parser and the UI.
