@@ -7,7 +7,6 @@ import seedu.inventorydock.command.FindItemByExpiryDateCommand;
 import seedu.inventorydock.command.FindItemByKeywordCommand;
 import seedu.inventorydock.command.FindItemByQtyCommand;
 import seedu.inventorydock.exception.DukeException;
-import seedu.inventorydock.ui.UI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

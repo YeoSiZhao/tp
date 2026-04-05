@@ -9,7 +9,6 @@ import seedu.inventorydock.command.ListCommand;
 import seedu.inventorydock.command.SortCommand;
 import seedu.inventorydock.command.UpdateItemCommand;
 import seedu.inventorydock.exception.DukeException;
-import seedu.inventorydock.ui.UI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

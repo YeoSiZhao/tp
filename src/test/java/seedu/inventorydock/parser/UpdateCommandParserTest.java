@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import seedu.inventorydock.command.UpdateItemCommand;
 import seedu.inventorydock.exception.DukeException;
 import seedu.inventorydock.parser.UpdateCommandParser;
-import seedu.inventorydock.ui.UI;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
