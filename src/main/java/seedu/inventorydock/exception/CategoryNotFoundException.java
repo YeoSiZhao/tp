@@ -23,13 +23,4 @@ public class CategoryNotFoundException extends InventoryDockException {
     public CategoryNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    /**
-     * Constructs a CategoryNotFoundException for a specific category name.
-     *
-     * @param categoryName The name of the category that was not found.
-     */
-    public CategoryNotFoundException(String categoryName) {
-        super("Category '" + categoryName + "' does not exist in the inventory.");
-    }
 }

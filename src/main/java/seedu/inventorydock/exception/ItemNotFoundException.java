@@ -23,13 +23,4 @@ public class ItemNotFoundException extends InventoryDockException {
     public ItemNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    /**
-     * Constructs an ItemNotFoundException for a specific item name.
-     *
-     * @param itemName The name of the item that was not found.
-     */
-    public ItemNotFoundException(String itemName) {
-        super("Item '" + itemName + "' not found in inventory.");
-    }
 }
