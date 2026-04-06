@@ -1,0 +1,53 @@
+@startuml
+title Class Diagram for FindItemByQtyCommand Feature
+skinparam classAttributeIconSize 0
+hide circle
+left to right direction
+
+class "{abstract}\nCommand" as Command {
+  + execute(...)
+}
+
+class FindItemParser {
+  + parse(input: String)
+}
+
+class FindItemByQtyCommand {
+  - qtyInput: int
+  + parseQtyInput(qtyInput: String)
+  + execute(...)
+}
+
+class Inventory {
+  + getCategories()
+}
+
+class Category {
+  + getItems()
+}
+
+class Item {
+  - name: String
+  - quantity: int
+  + getQuantity()
+}
+
+class UI {
+  + formatNoItemsFoundMessage(...)
+  + formatFoundItemsMessage(...)
+  + formatFindResultsHeader(...)
+  + showMessage(...)
+  + showDivider()
+  + showNumberedList(...)
+}
+
+class DukeException
+
+Command <|-- FindItemByQtyCommand
+FindItemParser ..> FindItemByQtyCommand : creates
+FindItemByQtyCommand --> Inventory : queries
+FindItemByQtyCommand --> UI : displays through
+FindItemByQtyCommand ..> DukeException
+Inventory "1" o-- "*" Category
+Category "1" o-- "*" Item
+@enduml
