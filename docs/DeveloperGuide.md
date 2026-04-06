@@ -1,5 +1,42 @@
 # Developer Guide
 
+## Table of Contents
+
+1. [Acknowledgements](#acknowledgements)
+2. [Design and Implementation](#design--implementation)
+   - [Find Item by Expiry Date](#find-item-by-expiry-date-feature)
+   - [Find Item by Category](#find-item-by-category-feature)
+   - [Find Item by Bin](#find-item-by-bin-feature)
+   - [Find Item by Quantity](#find-item-by-quantity-feature)
+   - [Find Item by Keyword](#find-item-by-keyword-feature)
+   - [Add Item Feature](#add-item-feature)
+   - [Update Item Feature](#update-item-feature)
+   - [List Feature](#list-feature)
+   - [Sort Feature](#sort-feature)
+   - [Storage Feature](#storage-feature)
+   - [Delete Item Feature](#delete-item-feature)
+   - [Delete Category Feature](#delete-category-feature)
+   - [Help Feature](#help-feature)
+3. [Product Scope](#product-scope)
+   - [Target User Profile](#target-user-profile)
+   - [Value Proposition](#value-proposition)
+4. [User Stories](#user-stories)
+5. [Non-Functional Requirements](#non-functional-requirements)
+6. [Glossary](#glossary)
+7. [Instruction for Manual Testing](#instructions-for-manual-testing)
+   - [Add Item](#testing-add-item)
+   - [List Item](#testing-list-command)
+   - [Find by bin](#testing-find-by-bin)
+   - [Find by quantity](#testing-find-by-quantity)
+   - [Find by category](#testing-find-by-category)
+   - [Find by expiry date](#testing-find-by-expiry-date)
+   - [Update Item](#testing-update-feature)
+   - [Sort Command](#testing-sort-command)
+   - [Storage feature](#testing-storage)
+
+---
+
+
 ## Acknowledgements
 
 This project is developed based on the concepts taught in CS2113. The overall architecture were inspired by
@@ -28,6 +65,10 @@ This design enforces separation of concerns:
 
 This modular structure improves maintainability and allows new features to be added with minimal impact on 
 existing components.
+
+The overall architecture of the application is shown below.
+
+![OverallClassDiagram](diagrams/class/OverallClass.png)
 
 ### Find Item By Expiry Date Feature
 
@@ -1076,23 +1117,6 @@ If this feature is extended in future versions, the following improvements could
 * Support updating multiple matched items in batch mode.  
 * Replace index-based targeting with more flexible item matching and disambiguation.  
 
-### Testing update item
-
-* Ensure the inventory contains at least one category with items, for example `fruits`.
-
-* Run  
-  `add category/fruits item/apple bin/A1 qty/10 expiryDate/2026-4-01 size/medium isRipe/true`
-
-* Run  
-  `update category/fruits index/1 qty/20`
-
-* Verify that the application shows a confirmation message indicating the item was updated.
-
-* Run `list`.
-
-* Verify that the quantity of apple is now updated to 20.
-
-
 ### List Feature
 
 The product also supports displaying the current inventory using the `list` command.
@@ -1238,7 +1262,7 @@ If this feature is extended in future versions, the following improvements could
 - Add pagination or condensed summaries for larger inventories.
 - Reuse the same command object for alternate UI front ends if the presentation layer expands.
 
-### Sort Feature (Coming Soon)
+### Sort Feature
 
 The product also supports displaying the current inventory with items sorted within each category using 
 the `sort` command.
@@ -1309,7 +1333,15 @@ prepares a sorted view for display.
 
 The main interaction for this flow is illustrated below.
 
-![SortingMainFlow](diagrams/SortingMainFlow.png)
+![SortingMainFlow](diagrams/sequence/SortingMainFlow.png)
+
+The main structural relationships for this feature are shown below.
+
+![SortingClassDiagram](diagrams/class/SortingClassDiagram.png)
+
+A representative object snapshot for this feature is shown below.
+
+![SortingObjectDiagram](diagrams/object/SortingObjectDiagram.png)
 
 #### Sorting logic
 
@@ -1428,6 +1460,10 @@ The save format is text-based. Each item is stored on a separate line together w
 additional fields required by its specific category. This allows all supported item types to be saved in a 
 single format while preserving the extra data needed for each subtype.
 
+The main structural relationships for the storage feature are shown below.
+
+![StorageClassDiagram](diagrams/class/StorageClassDiagram.png)
+
 #### Saving execution flow
 
 When the application saves, `Storage` performs the following sequence:
@@ -1469,7 +1505,11 @@ while the `Storage` class remains independent of specific item types.
 
 The main interaction for this flow is illustrated below.
 
-![StorageSavingMainFlow](diagrams/StorageSavingMainFlow.png)
+![StorageSavingMainFlow](diagrams/sequence/StorageSavingMainFlow.png)
+
+A representative object snapshot for the storage loading workflow is shown below.
+
+![StorageSavingObjectDiagram](diagrams/object/StorageSavingObjectDiagram.png)
 
 #### Loading execution flow
 
@@ -1495,7 +1535,11 @@ stored data reconstruction.
 
 The main interaction for this flow is illustrated below.
 
-![StorageLoadingMainFlow](diagrams/StorageLoadingMainFlow.png)
+![StorageLoadingMainFlow](diagrams/sequence/StorageLoadingMainFlow.png)
+
+A representative object snapshot for the storage loading workflow is shown below.
+
+![StorageLoadingObjectDiagram](diagrams/object/StorageLoadingObjectDiagram.png)
 
 #### Error handling and validation
 
@@ -2311,80 +2355,34 @@ After setting up the application, proceed to the individual test cases below.
 9. Verify that the application shows the missing expiry date error.
 
 
-### Testing updating multiple fields
+### Testing update feature
 
-1. Run  
-  `update category/fruits index/1 newItem/green_apple bin/A2 expiryDate/2026-5-01`
-
+1. Run `update category/fruits index/1 newItem/green_apple bin/A2 expiryDate/2026-5-01`
 2. Verify that:
   * The item name is updated to green_apple  
   * The bin location is updated to A2  
   * The expiry date is updated to 2026-5-01  
-
 3. Run `list`.
-
 4. Verify that all updated fields are reflected correctly.
-
----
-
-### Testing invalid category
-
 5. Run `update category/unknown index/1 qty/10`
-
 6. Verify that the application shows  `Category not found: unknown` or the corresponding error message.
-
----
-
-### Testing invalid index
-
 7. Run `update category/fruits index/100 qty/10`
-
 8. Verify that the application shows an error indicating the index is out of range.
-
 9. Run `update category/fruits index/abc qty/10`
-
-10. Verify that the application shows  
-  `Item index must be an integer.`
-
----
-
-### Testing missing fields
-
+10. Verify that the application shows `Item index must be an integer.`
 11. Run `update category/fruits index/1`
-
 12. Verify that the application shows `Provide at least one field to update.`
-
 13. Run `update index/1 qty/10`
-
 14. Verify that the application shows `Missing category.`
-
 15. Run `update category/fruits qty/10`
-
 16. Verify that the application shows `Missing item index.`
-
----
-
-### Testing invalid field values
-
 17. Run `update category/fruits index/1 qty/-5`
-
 18. Verify that the application shows `Quantity must be a positive integer.`
-
 19. Run `update category/fruits index/1 expiryDate/2026/05/01`
-
 20. Verify that the application shows `Invalid date. Please use yyyy-M-d.`
-
 21. Run `update category/fruits index/1 bin/`
-
 22. Verify that the application shows an error for missing bin location.
-
----
-
-### Testing unsupported fields
-
-23. Run  
-  `update category/fruits index/1 size/large`
-
+23. Run `update category/fruits index/1 size/large`
 24. Verify that the application shows  
   `Unsupported field: size` (or corresponding error message).
 

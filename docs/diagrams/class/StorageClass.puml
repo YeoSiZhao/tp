@@ -1,0 +1,82 @@
+@startuml
+title Class Diagram for Storage Feature
+skinparam classAttributeIconSize 0
+hide circle
+left to right direction
+
+class Storage {
+  - dataFile: File
+  + load(inventory: Inventory, ui: UI)
+  + save(inventory: Inventory)
+  - parseStoredLine(line: String, parser: AddItemCommandParser)
+  - extractCategory(line: String)
+  - formatItem(item: Item, categoryName: String)
+}
+
+class AddItemCommandParser {
+  + handleFruit(input: String)
+  + handleSnack(input: String)
+  + handleDrinks(input: String)
+  + handleVegetables(input: String)
+  + handleToiletries(input: String)
+  + handleIceCream(input: String)
+  + handleSweets(input: String)
+  + handleBurger(input: String)
+  + handleSetMeal(input: String)
+  + handleSeafood(input: String)
+  + handleMeat(input: String)
+  + handlePetFood(input: String)
+  + handleAccessories(input: String)
+}
+
+class "{abstract}\nCommand" as Command {
+  + execute(inventory: Inventory, ui: UI)
+}
+
+class AddItemCommand {
+  - categoryName: String
+  - item: Item
+  + execute(inventory: Inventory, ui: UI)
+}
+
+class Inventory {
+  + getCategories()
+}
+
+class Category {
+  - name: String
+  + getName()
+  + getItems()
+}
+
+class Item {
+  + toStorageString(categoryName: String)
+}
+
+class UI {
+  + showSkippedLine(line: String, reason: String)
+}
+
+class File {
+}
+
+note as N1
+  Storage loads persisted lines by reusing
+  AddItemCommandParser to create AddItemCommand
+  objects, then executes those commands on
+  the Inventory.
+
+  During save, Storage traverses the Inventory
+  and converts each Item into its storage format.
+end note
+
+Command <|-- AddItemCommand
+AddItemCommandParser ..> AddItemCommand : creates
+Storage --> AddItemCommand : executes during load
+Storage --> Inventory : populates / reads
+Storage --> UI : reports skipped lines via
+Inventory "1" o-- "*" Category
+Category "1" o-- "*" Item
+Storage *-- File : owns dataFile
+Storage ..> Item : formats
+@enduml

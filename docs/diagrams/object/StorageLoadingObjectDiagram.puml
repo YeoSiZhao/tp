@@ -1,0 +1,42 @@
+@startuml
+title Object Diagram for Storage Feature
+hide circle
+left to right direction
+
+object "<u>storage:Storage</u>" as storage
+object "<u>addItemParser:AddItemCommandParser</u>" as addItemParser
+object "<u>cmd:AddItemCommand</u>" as command {
+  categoryName = "fruits"
+}
+object "<u>inventory:Inventory</u>" as inventory
+object "<u>fruits:Category</u>" as fruits {
+  name = "fruits"
+}
+object "<u>apple:Fruit</u>" as apple {
+  name = "apple"
+  quantity = 10
+  binLocation = "A1"
+}
+object "<u>:UI</u>" as ui
+object "<u>dataFile:File</u>" as dataFile
+
+note as N1
+  This snapshot shows one representative
+  load operation from storage.
+
+  A stored line for category "fruits"
+  is parsed into an AddItemCommand,
+  which is then executed to recreate
+  the in-memory inventory state.
+end note
+
+storage --> addItemParser : uses >
+addItemParser --> command : creates >
+command --> apple : carries >
+storage --> command : executes >
+storage --> inventory : populates >
+storage --> ui : reports errors via >
+storage --> dataFile : reads from >
+inventory --> fruits : contains >
+fruits --> apple : contains >
+@enduml
