@@ -1,9 +1,9 @@
 package seedu.inventorydock.command;
 
 import org.junit.jupiter.api.Test;
-import seedu.inventorydock.exception.DukeException;
 import seedu.inventorydock.model.Inventory;
 import seedu.inventorydock.ui.UI;
+import seedu.inventorydock.exception.InventoryDockException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -29,7 +29,7 @@ public class CommandTest {
     }
 
     @Test
-    public void execute_concreteSubclass_receivesSameArguments() throws DukeException {
+    public void execute_concreteSubclass_receivesSameArguments() throws InventoryDockException {
         RecordingCommand command = new RecordingCommand();
 
         Inventory inventory = null;
@@ -45,7 +45,7 @@ public class CommandTest {
     public void execute_subclassThrowsDukeException_exceptionPropagates() {
         Command command = new FailingCommand();
 
-        DukeException e = assertThrows(DukeException.class,
+        InventoryDockException e = assertThrows(InventoryDockException.class,
                 () -> command.execute(null, null));
 
         assertTrue(e.getMessage().contains("Simulated execute failure"));
@@ -73,8 +73,8 @@ public class CommandTest {
      */
     private static class FailingCommand extends Command {
         @Override
-        public void execute(Inventory inventory, UI ui) throws DukeException {
-            throw new DukeException("Simulated execute failure");
+        public void execute(Inventory inventory, UI ui) throws InventoryDockException {
+            throw new InventoryDockException("Simulated execute failure");
         }
     }
 }
