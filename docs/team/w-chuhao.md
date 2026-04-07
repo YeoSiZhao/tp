@@ -138,11 +138,13 @@ Sequence diagrams I contributed:
 - [ListCommandMainFlow.puml](../diagrams/sequence/ListCommandMainFlow.puml)
 - [FindItemByCategoryCommandMainFlow.puml](../diagrams/sequence/FindItemByCategoryCommandMainFlow.puml)
 - [FindItemByBinCommandMainFlow.puml](../diagrams/sequence/FindItemByBinCommandMainFlow.puml)
+
 Class diagrams I contributed:
 - [AddItemCommandClassDiagram.puml](../diagrams/class/AddItemCommandClassDiagram.puml)
 - [ListCommandClassDiagram.puml](../diagrams/class/ListCommandClassDiagram.puml)
 - [FindItemByCategoryCommandClassDiagram.puml](../diagrams/class/FindItemByCategoryCommandClassDiagram.puml)
 - [FindItemByBinCommandClassDiagram.puml](../diagrams/class/FindItemByBinCommandClassDiagram.puml)
+
 Object diagrams I contributed:
 - [AddItemCommandObjectDiagram.puml](../diagrams/object/AddItemCommandObjectDiagram.puml)
 - [ListCommandObjectDiagram.puml](../diagrams/object/ListCommandObjectDiagram.puml)

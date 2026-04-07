@@ -1,0 +1,42 @@
+@startuml
+title Object Diagram for Sort Feature
+hide circle
+left to right direction
+
+object "<u>sortParser:SortCommandParser</u>" as parser
+object "<u>cmd:SortCommand</u>" as command {
+  sortType = "expirydate"
+}
+object "<u>inventory:Inventory</u>" as inventory
+object "<u>fruits:Category</u>" as fruits
+object "<u>apple:Fruit</u>" as apple {
+  name = "apple"
+  quantity = 10
+  expiryDate = "2026-4-01"
+}
+object "<u>banana:Fruit</u>" as banana {
+  name = "banana"
+  quantity = 30
+  expiryDate = "2026-3-25"
+}
+object "<u>:UI</u>" as ui
+object "<u>:DateParser</u>" as dateParser
+
+note as N1
+  This snapshot shows one representative
+  execution of sort by expiry date.
+
+  The command reads the existing inventory,
+  prepares a sorted view of the items in the
+  category, and passes that sorted view to UI
+  without changing the original inventory order.
+end note
+
+parser --> command : creates >
+command --> inventory : reads from >
+inventory --> fruits : contains >
+fruits --> apple : contains >
+fruits --> banana : contains >
+command ..> dateParser : parses dates with >
+command --> ui : displays through >
+@enduml

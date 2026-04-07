@@ -12,23 +12,7 @@ tracking of items by quantity, expiry date, and bin location.
 - [Code contribution dashboard](https://nus-cs2113-ay2526-s2.github.io/tp-dashboard/?search=&sort=groupTitle&sortWithin=title&timeframe=commit&mergegroup=&groupSelect=groupByRepos&breakdown=true&checkedFileTypes=docs~functional-code~test-code~other&since=2026-02-20T00%3A00%3A00&filteredFileName=&tabOpen=true&tabType=authorship&tabAuthor=yueyang1111&tabRepo=AY2526S2-CS2113-W09-2%2Ftp%5Bmaster%5D&authorshipIsMergeGroup=false&authorshipFileTypes=docs~other~test-code~functional-code&authorshipIsBinaryFileTypeChecked=false&authorshipIsIgnoredFilesChecked=false)
 
 ### Enhancements Implemented
-#### 1. Exception handling and input validation support
-
-I implemented and refined the project's exception-handling flow to ensure that invalid inputs and runtime issues are 
-reported clearly to the user instead of causing the application to fail abruptly. This included designing user-facing 
-error propagation through the command and parser pipeline.
-
-Key aspects of the implementation:
-
-1. Added and refined DukeException as the main custom exception type for domain-specific errors.
-2. Helped standardize how parsing and command-related errors are thrown and surfaced to the UI.
-3. Improved validation flow so invalid or incomplete user inputs are detected early and reported with clearer error messages.
-4. Helped support more robust command execution by ensuring exceptional cases are handled consistently across components.
-
-This contribution is significant because exception handling affects almost every user-facing feature. It improves the 
-reliability of the application and makes the CLI much easier to use and debug.
-
-#### 2. Storage support for persistent inventory data
+#### 1. Storage support for persistent inventory data
 
 I worked on the storage component so that inventory data can be saved and loaded across application sessions. 
 This allows InventoryDock to retain item information after the program exits, which is essential for practical use.
@@ -43,7 +27,11 @@ Key aspects of the implementation:
 This contribution is important because persistence is one of the core requirements of an inventory management 
 application. Without storage support, users would lose all item data whenever the program closes.
 
-#### 3. Logging support for debugging and maintainability
+Representative PRs:
+
+- [#55](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/55)
+
+#### 2. Logging support for debugging and maintainability
 
 I added logging support to improve traceability during development and debugging. This made it easier to diagnose 
 parser, storage, and command issues without relying only on console prints.
@@ -58,7 +46,11 @@ Key aspects of the implementation:
 This contribution is meaningful because logging is especially useful in a multi-component CLI application where bugs 
 may originate from parsing, storage, or command execution rather than a single isolated class.
 
-#### 4. Parsing support for add item functionality
+Representative PRs:
+
+- [#57](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/57)
+
+#### 3. Parsing support for add item functionality
 
 I helped with the parsing logic for the add item command, particularly in validation and supporting the command flow 
 that converts structured user input into the correct item objects.
@@ -67,13 +59,21 @@ Key aspects of the implementation:
 
 1. Helped refine parsing logic used by the add-item feature.
 2. Supported validation of required fields and field ordering for structured command input.
-3. Contributed to parser-side checks so malformed commands are rejected before execution.
+3. Contributed to parser side checks so malformed commands are rejected before execution.
 4. Helped improve the reliability of category-specific parsing for item creation.
 
-This contribution is significant because the add-item feature is one of the product’s main write operations. It depends 
+This contribution is significant because the add item feature is one of the product’s main write operations. It depends 
 heavily on correct parsing and validation to ensure that user input is translated into valid inventory records.
 
-#### 5. Sorting feature
+Representative PRs:
+
+- [#28](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/28)
+- [#31](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/31)
+- [#37](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/37)
+- [#46](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/46)
+- [#86](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/86)
+
+#### 4. Sorting feature
 
 I contributed to the sorting feature by implementing the parsing logic and integrating it into the command pipeline.
 This feature allows users to view the inventory with items sorted within each category based on different criteria. 
@@ -91,6 +91,10 @@ Key aspects of the implementation:
 This contribution is important because it enables the sorting feature to be correctly triggered and used by users, 
 ensuring reliable command interpretation and error handling.
 
+Representative PRs:
+
+- [#119](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/119)
+
 ### Contributions to the User Guide
 
 I contributed to the user-facing documentation for features related to my implementation work. In particular, I wrote or 
@@ -102,10 +106,16 @@ updated sections related to:
 
 These updates helped make the product easier for users to understand without needing to inspect the source code.
 
+These are the parts in the user guide that I have wrote or updated:
+
+- [Storage Feature](../UserGuide.md#data-storage)
+- [Sorting feature](../UserGuide.md#sorting-items-sort)
+- [Error Handling](../UserGuide.md#error-handling)
+
 ### Contributions to the Developer Guide
 
 I contributed technical documentation for the components I worked on, specifically the storage implementation, 
-loading flow and the sorting feature.
+saving and loading flow, as well as the sorting feature.
 
 I was responsible for writing the Developer Guide sections related to storage, including explaining how data is 
 persisted and reconstructed during application startup.
@@ -125,7 +135,22 @@ My contributions included:
 5. Manual testing considerations for storage and sorting features
 
 I also contributed to and updated UML sequence diagrams to illustrate the storage loading flow and overall interaction 
-between components, as well as the soring command execution flow.
+between components, as well as the sorting command execution flow.
+
+Class diagrams I contributed:
+- [OverallClass.puml](../diagrams/class/OverallClass.puml)
+- [SortingClassDiagram.puml](../diagrams/class/SortingClassDiagram.puml)
+- [StorageClassDiagram.puml](../diagrams/class/StorageClass.puml)
+
+Object diagrams I contributed:
+- [SortingObjectDiagram.puml](../diagrams/object/SortingObjectDiagram.puml)
+- [StorageLoadingObjectDiagram.puml](../diagrams/object/StorageLoadingObjectDiagram.puml)
+- [StorageSavingObjectDiagram.puml](../diagrams/object/StorageSavingObjectDiagram.puml)
+  
+Sequence diagrams I contributed:
+- [SortingMainFlow.puml](../diagrams/sequence/SortingMainFlow.puml)
+- [StorageLoadingMainFlow.puml](../diagrams/sequence/StorageLoadingMainFlow.puml)
+- [StorageSavingMainFlow.puml](../diagrams/sequence/StorageSavingMainFlow.puml)
 
 ### Contributions to Team-Based Tasks
 
@@ -138,3 +163,11 @@ between components, as well as the soring command execution flow.
 1. Reviewed and responded to feedback related to parser behaviour, validation logic, and maintainability.
 2. Helped teammates troubleshoot issues involving parsing, storage, and project structure.
 3. Contributed to improving consistency across shared components used by multiple features.
+
+The following are the reviews I have made to help improve the structure or quality of our code:
+
+- [#26](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/26) Reviewed delete feature and suggested ways to use index finding instead of name.
+- [#41](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/41) Reviewed the use of logging and assertion.
+- [#75](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/75) Reviewed update feature and suggested ways to use index finding instead of name.
+- [#77](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/77) Reviewed find by bin feature and suggested ways to improve code quality.
+- [#120](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/120) Reviewed find by quantity feature and suggested ways to improve code quality.

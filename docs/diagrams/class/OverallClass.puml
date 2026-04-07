@@ -1,0 +1,42 @@
+@startuml
+skinparam componentStyle rectangle
+
+package "Main" {
+    [InventoryDock] as MainApp <<component>>
+}
+
+package "UI" {
+    [UI] as UiComponent <<component>>
+}
+
+package "Logic" {
+    [Parser] as ParserComponent <<component>>
+    [Command] as CommandComponent <<component>>
+}
+
+package "Model" {
+    [Inventory] as InventoryComponent <<component>>
+    [Category] as CategoryComponent <<component>>
+    [Item] as ItemComponent <<component>>
+}
+
+package "Storage" {
+    [Storage] as StorageComponent <<component>>
+}
+
+database "Data File" {
+    [inventory.txt] as DataFile
+}
+
+MainApp --> UiComponent : input/output
+MainApp --> ParserComponent : parse input
+ParserComponent ..> CommandComponent : creates
+MainApp --> CommandComponent : execute
+CommandComponent --> InventoryComponent : read/update
+CommandComponent --> UiComponent : show result
+MainApp --> StorageComponent : load/save
+StorageComponent --> DataFile : read/write
+
+InventoryComponent --> CategoryComponent : contains
+CategoryComponent --> ItemComponent : contains
+@enduml

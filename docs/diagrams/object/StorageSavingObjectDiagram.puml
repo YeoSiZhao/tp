@@ -1,0 +1,45 @@
+@startuml
+title Object Diagram for Storage Saving Feature
+hide circle
+left to right direction
+
+object "<u>storage:Storage</u>" as storage
+object "<u>inventory:Inventory</u>" as inventory
+object "<u>fruits:Category</u>" as fruits {
+  name = "fruits"
+}
+object "<u>apple:Fruit</u>" as apple {
+  name = "apple"
+  quantity = 10
+  binLocation = "A1"
+}
+object "<u>snacks:Category</u>" as snacks {
+  name = "snacks"
+}
+object "<u>chips:Snack</u>" as chips {
+  name = "chips"
+  quantity = 8
+  binLocation = "B2"
+}
+object "<u>dataFile:File</u>" as dataFile
+
+note as N1
+  This snapshot shows one representative
+  save operation to storage.
+
+  Storage traverses the inventory,
+  reads items grouped by category,
+  converts each item into its storage
+  string representation, and writes
+  the result to the data file.
+end note
+
+storage --> inventory : reads >
+storage --> dataFile : writes to >
+inventory --> fruits : contains >
+inventory --> snacks : contains >
+fruits --> apple : contains >
+snacks --> chips : contains >
+storage ..> apple : formats >
+storage ..> chips : formats >
+@enduml

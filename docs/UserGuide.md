@@ -123,7 +123,7 @@ Expected result:
 * Items under each category are listed with their details.
 * If the inventory is empty, the app shows `Inventory is empty.`
 
-### Sorting items: `sort` (Coming soon)
+### Sorting items: `sort`
 Lists the full inventory grouped by category, with the items inside each category sorted by the chosen field.
 
 Format: `sort SORT_TYPE`
