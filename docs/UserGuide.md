@@ -10,7 +10,7 @@ This guide covers the commands needed to add items, list all stored items, and s
 1. Ensure that you have Java 17 or above installed.
 2. Download the latest version of the application jar.
 3. Open a terminal in the project folder.
-4. Run `java -jar tp.main.jar`.
+4. Run `java -jar duke.jar`.
 5. Type a command and press Enter.
 
 ## Command Format
@@ -101,6 +101,27 @@ Expected result:
 * The item is added to the specified category.
 * The app confirms the item name, quantity, category, and bin location.
 
+### Find items by keyword: `find keyword/...`
+Finds items whose names contain the given keyword.
+
+Format:
+
+`find keyword/KEYWORD`
+
+Notes:
+
+* Matching is case-insensitive.
+* Partial matches work. For example, `apple` matches `apple`, `pineapple`, and `apple_juice`.
+
+Examples:
+
+* `find keyword/apple`
+* `find keyword/chip`
+
+Expected result:
+
+* Matching items are listed together with their category names.
+* If nothing matches, the app shows `No items found matching keyword: KEYWORD.`
 
 ### Finding items by category: `find category/...`
 Shows all items stored in a specified category.
@@ -116,6 +137,25 @@ Expected result:
 * If the category exists and contains items, the app lists all items in that category.
 * If the category exists but has no items, the app shows `No items found in category: CATEGORY.`
 * If the category does not exist, the app shows an error that the category was not found.
+
+### Find items by expiry date: `find expiryDate/...`
+
+Shows all items whose expiry date is on or before the specified date.
+
+Format:
+
+`find expiryDate/DATE`
+
+Examples:
+
+* `find expiryDate/2026-3-21`
+* `find expiryDate/2026-12-31`
+
+Expected result:
+
+* Items expiring on the given date are included.
+* Items expiring before the given date are also included.
+* If nothing matches, the app shows `No items found expiring by DATE.`
 
 ### Finding items by bin: `find bin/...`
 Shows all items that match a bin search.
@@ -164,6 +204,12 @@ Expected result:
 * Items with quantity lower than the given value are also included.
 * If nothing matches, the app shows `No items found with quantity: QUANTITY.`
 
+### View help: `help`
+Shows the list of available commands and the link to the published user guide.
+
+Format:
+
+`help`
 
 ### Listing all items: `list`
 Lists the entire inventory grouped by category.
@@ -180,70 +226,12 @@ Expected result:
 * Items under each category are listed with their details.
 * If the inventory is empty, the app shows `Inventory is empty.`
 
-## Error Handling
+### Sorting items: `sort`
+Lists the full inventory grouped by category, with the items inside each category sorted by the chosen field.
 
-Common reasons a command may fail:
+Format: `sort SORT_TYPE`
 
-* missing required fields
-* fields entered in the wrong order for `add`
-* invalid quantity values
-* invalid dates
-* invalid bin search format
-* invalid item index
-* unsupported update fields
-* unknown categories or commands
-
-When an error occurs, the app prints an error message and waits for the next command.
-
-## FAQ
-
-**Q**: How do I transfer my data to another computer? 
-
-**A**: Copy the application's data file to the same location on the other computer before starting the app there.
-
-**Q:** Where is my inventory data stored?
-
-**A:** In `data/inventory.txt`.
-
-**Q:** Does the app create new categories?
-
-**A:** No. InventoryDock works with a fixed set of built-in categories.
-
-**Q:** Can I update category-specific fields such as `brand/` or `isFrozen/`?
-
-**A:** No. The `update` command only supports `newItem/`, `bin/`, `qty/`, and `expiryDate/`.
-
-**Q:** What date format should I use?
-
-**A:** Use `yyyy-M-d`, for example `2026-3-21`.
-
-**Q:** What happens if I delete a category?
-
-**A**: The category is cleared, but the category itself remains in the inventory.
-
-## Command Summary
-* View help:
-  `help`
-* Add item:
-  `add category/CATEGORY item/ITEM bin/BIN qty/QUANTITY expiryDate/DATE ...`
-* List all items:
-  `list`
-* Sort items:
-  `sort SORT_TYPE`
-* Find items by keyword:
-  `find keyword/KEYWORD`
-* Find items by category:
-  `find category/CATEGORY`
-* Find items by expiry date:
-  `find expiryDate/DATE`
-* Find items by bin:
-  `find bin/BIN_INPUT`
-* Find items by quantity:
-  `find qty/QUANTITY`
-* Update an item:
-  `update category/CATEGORY index/INDEX [newItem/NEW_NAME] [bin/NEW_BIN] [qty/NEW_QUANTITY] [expiryDate/NEW_DATE]`
-* Delete an item
-  `delete category/CATEGORY index/INDEX`
-* Clear a category
-  `delete category/CATEGORY`
-
+Valid `SORT_TYPE` values:
+* `name`: Sorts items alphabetically by item name, ignoring letter case
+* `expirydate` : Sort items by expiry date, from earliest to latest
+* `qty` : Sorts items by quantity, from highest to lowest

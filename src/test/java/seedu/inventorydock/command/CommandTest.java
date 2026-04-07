@@ -1,9 +1,9 @@
 package seedu.inventorydock.command;
 
 import org.junit.jupiter.api.Test;
+import seedu.inventorydock.exception.InventoryDockException;
 import seedu.inventorydock.model.Inventory;
 import seedu.inventorydock.ui.UI;
-import seedu.inventorydock.exception.InventoryDockException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -42,7 +42,7 @@ public class CommandTest {
     }
 
     @Test
-    public void execute_subclassThrowsDukeException_exceptionPropagates() {
+    public void execute_subclassThrowsInventoryDockException_exceptionPropagates() {
         Command command = new FailingCommand();
 
         InventoryDockException e = assertThrows(InventoryDockException.class,

@@ -68,7 +68,7 @@ existing components.
 
 The overall architecture of the application is shown below.
 
-![OverallClassDiagram](diagrams/class/OverallClass.png)
+![ArchitectureDiagram](diagrams/ArchitectureDiagram.png)
 
 ### Add Item Feature
 
@@ -206,15 +206,16 @@ silently introducing unintended categories due to typing errors.
 Validation is split across the parser layer.
 
 `AddCommandParser` rejects missing shared fields such as `item/` and `category/` before dispatching
-to a category-specific parser.
+to a category-specific parser. These failures are reported using `MissingArgumentException`, while an
+unsupported category is reported using `InvalidCommandException`.
 
 `AddItemCommandParser` and the specialised parsers validate category-specific input. If required
 fields are missing or malformed, they throw `InventoryDockException` before an `AddItemCommand` is created.
 
 `AddItemCommand` also performs execution-time checks. If `inventory.findCategoryByName(categoryName)`
-returns `null`, the command throws a `InventoryDockException` with the message
-`Category not found: <categoryName>`. If the parsed item is unexpectedly `null`, it throws
-`Item cannot be null.`
+returns `null`, the command throws a `CategoryNotFoundException` with the message
+`Category not found: <categoryName>`. If the parsed item is unexpectedly `null`, it throws a
+`MissingArgumentException` with the message `Item cannot be null.`
 
 This layered approach ensures invalid input is rejected as early as possible, while still protecting
 the command layer from invalid state.
@@ -260,6 +261,199 @@ If this feature is extended in future versions, the following improvements could
 - Support optional default values for selected fields where domain rules permit them.
 - Separate category definitions from parser code so new item types can be added with less wiring.
 
+### Find Item By Expiry Date Feature
+
+One enhancement added to the product is the ability to find items by expiry date using the command
+`find expiryDate/DATE`.
+
+This feature was introduced because the inventory is centered around storing physical goods, many of
+which are perishable or time-sensitive. In this context, searching by name alone is not sufficient.
+A user may know that some products are expiring soon, but may not remember the exact names or which
+category they were placed under. The expiry-date search solves this by letting the user enter a cutoff
+date and retrieve every item expiring on or before that date.
+
+For example, if the user enters `find expiryDate/2026-3-25`, the system returns all items with expiry
+dates earlier than `2026-3-25` as well as items expiring exactly on `2026-3-25`.
+
+#### High-level design
+
+At a high level, this enhancement reuses the existing command-based architecture of the application.
+The feature fits naturally into the existing flow:
+
+1. The user enters a `find` command.
+2. `FindItemParser` inspects the prefix after `find`.
+3. If the prefix is `expiryDate/`, the parser creates a `FindItemByExpiryDateCommand`.
+4. The command is executed with access to the current `Inventory` and `UI`.
+5. The command scans the inventory and prints the matching results.
+
+This design was chosen because it follows the same separation of concerns already used in the project:
+
+- Parsers are responsible for interpreting user input.
+- Command classes are responsible for application behaviour.
+- Model classes store inventory data.
+- `UI` is responsible for displaying the result to the user.
+
+As a result, the new enhancement could be added without changing the overall architecture of the system.
+It is an extension of the existing command pipeline rather than a separate subsystem.
+
+#### Component-level implementation
+
+The feature is mainly implemented using the following classes:
+
+- `FindItemParser`
+- `FindItemByExpiryDateCommand`
+- `DateParser`
+- `Inventory`
+- `Category`
+- `Item`
+
+The responsibilities of these classes are as follows:
+
+- `FindItemParser` recognises that the user wants to perform a search based on expiry date.
+- `FindItemByExpiryDateCommand` performs the actual search logic.
+- `DateParser` ensures that the provided date is valid and converts it into a `LocalDate`.
+- `Inventory` exposes the list of categories currently stored.
+- `Category` exposes the list of items belonging to that category.
+- `Item` provides each stored item's expiry date.
+
+The parser logic is intentionally simple. After splitting the input around the first `/`, it checks the
+left-hand side to determine what type of find command the user requested. If the type is `expirydate`,
+it returns a new `FindItemByExpiryDateCommand`.
+
+This means the parser does not perform the date comparison itself. Instead, it only constructs the
+correct command object. This keeps parsing logic lightweight and pushes business logic into the command
+layer, where it belongs.
+
+#### Command execution flow
+
+When `FindItemByExpiryDateCommand.execute()` is called, the implementation performs the following sequence:
+
+1. Assert that `inventory`, `ui`, and `expiryDateInput` are not `null`.
+2. Convert the user-supplied date into a `LocalDate` by calling `DateParser.parseDate(expiryDateInput)`.
+3. Create an empty `List<String>` named `matches` to store formatted search results.
+4. Retrieve all categories from the `Inventory`.
+5. Iterate through each `Category`.
+6. Within each category, iterate through each `Item`.
+7. Read the item's expiry date using `item.getExpiryDate()`.
+8. Skip that item if the expiry date is `null`.
+9. Parse the item's expiry date into a `LocalDate`.
+10. Compare the item's expiry date with the user-provided cutoff date.
+11. If the item date is not after the cutoff date, add a formatted result string to `matches`.
+12. After the scan is complete, either:
+13. Display a "no items found" message if `matches` is empty, or
+14. Print the list of matching items with numbering and dividers.
+
+The key comparison is:
+
+```java
+if (!itemDate.isAfter(cutoffDate)) {
+    matches.add(category.getName() + ": " + item);
+}
+```
+
+This logic means the search is inclusive. In other words, if an item expires on the exact cutoff date,
+it is still considered a match. This is the intended behaviour because users searching for items expiring
+"by" a certain date usually expect items on that date to be included.
+
+#### Why the feature is implemented this way
+
+The most important design choice in this enhancement is that the command performs a full scan of the
+inventory instead of relying on a precomputed data structure such as a sorted list, map, or expiry-date
+index.
+
+This was chosen for three reasons.
+
+First, it keeps the implementation small and easy to reason about. The inventory is already organized by
+category, and each category already stores its own list of items. Reusing that structure avoids adding
+new state that must be updated every time an item is added, deleted, or edited.
+
+Second, it reduces the risk of inconsistency. If an additional expiry-date index were introduced, the
+application would need to ensure that every mutation to the inventory also updates the index correctly.
+For a student project, the simpler design is more robust because there are fewer moving parts that can
+fall out of sync.
+
+Third, the expected inventory size is modest. A linear scan is acceptable for the current scale of the
+application. The extra complexity of a specialised indexing structure is not justified unless the number
+of items becomes large enough for search performance to become a real bottleneck.
+
+Another deliberate design decision is the use of `LocalDate` instead of comparing raw strings.
+Even though the input format looks sortable, relying on proper date parsing is safer and more maintainable.
+It guarantees that invalid dates are rejected early and ensures that comparisons remain logically correct.
+
+The implementation also ignores items whose expiry date is `null`. This was done to make the command
+resilient when scanning heterogeneous inventory data. Some items may not have expiry dates populated, and
+those items should not cause the search to fail. Instead, they are excluded from the result set because
+they do not carry the attribute being searched on.
+
+#### Error handling and validation
+
+Input validation is handled mainly by `DateParser`.
+
+If the user provides a missing or blank expiry date, `DateParser` throws a `InventoryDockException` with the
+message `Missing expiry date`.
+
+If the user provides an invalid format such as `2026/3/25`, `DateParser` throws a `InventoryDockException` with
+the message `Invalid date. Please use yyyy-M-d.`
+
+This design centralises date validation in one place instead of duplicating date checks across multiple
+commands. That improves consistency and makes future maintenance easier. If the date format requirement
+changes later, only `DateParser` needs to be updated.
+
+The parser also handles malformed `find` commands before the command object is created. For example, if
+the user enters `find expiryDate/` with no value after the slash, `FindItemParser` identifies the missing
+argument and reports invalid input to the UI.
+
+#### Alternatives considered
+
+Several alternatives were considered when implementing this enhancement.
+
+Alternative 1: Compare expiry dates as strings.
+
+This approach would have been shorter to implement because it avoids converting strings into `LocalDate`
+objects. However, it was rejected because string comparison is more fragile and tightly coupled to the
+exact formatting of the stored dates. Using `LocalDate` gives stronger correctness guarantees and clearer
+intent.
+
+Alternative 2: Store items in a separate expiry-date index.
+
+This approach could improve search performance by making lookups faster than a full scan, especially for
+larger inventories. It was rejected for now because it adds extra complexity to the data model. Every
+operation that modifies the inventory would also need to update the index, which increases implementation
+effort and introduces more opportunities for bugs.
+
+Alternative 3: Restrict expiry-date search to a single category at a time.
+
+This approach could reduce the scope of each search and align with the current category-based inventory
+organisation. It was rejected because it weakens the usefulness of the feature. Users usually care about
+which items are expiring soon across the entire inventory, not within one specific category.
+
+Alternative 4: Return only items expiring exactly on the given date.
+
+This would have made the search condition simpler and more literal. It was rejected because the use case
+is broader than exact-date matching. A cutoff-based search is more practical for inventory review and
+waste prevention because it supports questions like "Which items expire by the end of this week?"
+
+#### Current limitations
+
+The current implementation has some limitations.
+
+- It performs a full scan of the inventory each time the command is run.
+- It returns formatted strings rather than a structured result object.
+- It depends on expiry dates being stored in a valid format.
+- It does not sort the output by earliest expiry date; results follow the current category and item order.
+
+These limitations are acceptable for the current scope, but they identify possible directions for future
+enhancement.
+
+#### Possible future improvements
+
+If this feature is extended in future versions, the following improvements could be considered:
+
+- Sort matching items by expiry date before displaying them.
+- Highlight items that are already expired separately from items that are merely approaching expiry.
+- Support date ranges such as `find expiryDate/2026-3-01 to/2026-3-25`.
+- Add category filters so users can combine expiry search with category search.
+- Introduce an internal index if inventory size grows enough to justify optimisation.
 
 ### Find Item By Category Feature
 
@@ -382,11 +576,11 @@ multiple commands.
 
 Input validation is handled mainly by `FindItemParser`.
 
-If the user enters `find` with no target, the parser throws a `InventoryDockException` explaining the supported
-find formats.
+If the user enters `find` with no target, the parser throws a `MissingArgumentException` explaining the
+supported find formats.
 
-If the user enters `find category/` with no value after the slash, the parser throws a `InventoryDockException`
-for the missing name before any command object is created.
+If the user enters `find category/` with no value after the slash, the parser throws a
+`MissingArgumentException` for the missing name before any command object is created.
 
 At execution time, `FindItemByCategoryCommand` handles two normal non-error outcomes explicitly:
 
@@ -727,6 +921,205 @@ If this feature is extended in future versions, the following improvements could
 - Sort results by quantity so that the lowest-stock items appear first.
 - Allow quantity search to be combined with other filters such as category or expiry date.
 
+
+### Update Item Feature
+
+Another core feature of the product is the ability to update an existing item in a category using the
+`update` command.
+
+This feature is necessary because inventory records may change over time. A user may need to correct an
+item name, adjust its quantity, move it to a different bin location, or revise its expiry date. Without
+an update operation, the user would have to delete the item and recreate it manually, which is less
+efficient and more error-prone. The update-item command solves this by allowing selected fields of an
+existing item to be modified directly.
+
+For example, if the user enters  
+`update category/fruits index/1 qty/20 expiryDate/2026-4-15`,  
+the system locates the first item in the fruits category and updates its quantity and expiry date  
+while leaving its other fields unchanged.
+
+#### High-level design
+
+At a high level, this feature fits into the same command-based architecture used throughout the
+application. The flow is as follows:
+
+* The user enters an `update` command.
+* Parser recognises the `update` command word and delegates the remaining input to `UpdateCommandParser`.
+* `UpdateCommandParser` extracts the category, item index, and the fields to be updated.
+* The parser creates an `UpdateItemCommand`.
+* The command is executed with access to the current `Inventory` and `UI`.
+* The command locates the target category and item, applies the requested updates, and shows a
+  confirmation message.
+
+This design was chosen because it preserves the same separation of concerns already used by the rest
+of the application:
+
+* Parsers interpret user input.
+* Command classes implement behaviour.
+* Model classes store inventory data.
+* UI displays the final result.
+
+As a result, the update feature integrates cleanly into the existing command pipeline without requiring
+a separate editing subsystem.
+
+#### Component-level implementation
+
+The feature is mainly implemented using the following classes:
+
+* `Parser`
+* `UpdateCommandParser`
+* `UpdateItemCommand`
+* `Inventory`
+* `Category`
+* `Item`
+* `CommonFieldParser`
+* `UI`
+
+The responsibilities of these classes are as follows:
+
+* `Parser` detects the update command word and delegates to `UpdateCommandParser`.
+* `UpdateCommandParser` tokenises the input, validates `category/` and `index/`, collects the updated
+  fields into a `Map<String, String>`, and constructs an `UpdateItemCommand`.
+* `UpdateItemCommand` locates the item and applies the requested changes.
+* `Inventory` provides category lookup using `findCategoryByName(...)`.
+* `Category` provides indexed item access through `getItem(...)`.
+* `Item` provides setter methods such as `setName(...)`, `setQuantity(...)`, `setBinLocation(...)`,
+  and `setExpiryDate(...)`.
+* `CommonFieldParser` is reused for quantity and expiry-date validation so that update validation stays
+  consistent with add-command validation.
+* `UI` displays the result after the update is completed.
+
+This design intentionally separates parsing from mutation. The parser determines what should be updated,
+while the command is responsible for locating the correct item and applying the changes.
+
+#### Command execution flow
+
+When `UpdateItemCommand.execute()` is called, the implementation performs the following sequence:
+
+* Assert that `inventory` and `ui` are not null.
+* Call `inventory.findCategoryByName(categoryName)` to locate the target category.
+* If the category is not found, throw a `CategoryNotFoundException`.
+* Validate that the provided `itemIndex` is within the valid range for that category.
+* Retrieve the target item using `category.getItem(itemIndex - 1)`.
+* Store the original item name for display purposes.
+* Call `applyUpdates(item)`.
+* Iterate through each entry in the updates map.
+* Match each field name using a switch statement.
+* Apply the corresponding update to the item.
+* After all updates are applied, call `ui.showItemUpdated(...)`.
+
+The central logic is:
+
+```java
+Category category = inventory.findCategoryByName(categoryName);
+if (category == null) {
+   throw new CategoryNotFoundException("Category not found: " + categoryName);
+}
+
+if (itemIndex < 1 || itemIndex > category.getItemCount()) {
+   throw new ItemNotFoundException(
+           "Item at index " + itemIndex + " not found in category '" + categoryName + "'.");
+}
+
+Item item = category.getItem(itemIndex - 1);
+String originalName = item.getName();
+applyUpdates(item);
+ui.showItemUpdated(originalName, item.getName(), category.getName());
+```
+
+#### Why the feature is implemented this way
+
+The most important design choice in this feature is that the parser stores updates in a  
+`Map<String, String>` rather than creating a different command class for every possible update  
+combination.
+
+This was chosen for three reasons.
+
+* First, it keeps the parsing logic flexible. A user may update one field or several fields in a single  
+  command, and a map allows the parser to capture all requested updates without requiring a separate  
+  representation for every case.
+
+* Second, it keeps the command extensible. New updatable fields can be added by extending the switch  
+  statement inside `applyUpdates(...)` instead of redesigning the overall feature.
+
+* Third, it avoids unnecessary duplication. The same update mechanism can handle name, quantity, bin, and  
+  expiry date changes in one place.
+
+Another deliberate design choice is reusing existing validation helpers such as  
+`CommonFieldParser.parseQuantity(...)` and `CommonFieldParser.validateExpiryDate(...)`. This ensures  
+that update commands follow the same validation rules as add commands, which improves consistency across  
+the application.
+
+#### Error handling and validation
+
+Validation is split across the parser layer and the command layer.
+
+`UpdateCommandParser` handles syntax-level validation. It rejects:
+
+* empty update input  
+* malformed tokens without a valid `/` separator  
+* missing `category/`  
+* missing `index/`  
+* non-integer item indices  
+* non-positive item indices  
+* update commands that do not specify any fields to change  
+
+`UpdateItemCommand` handles execution-time validation. It rejects:
+
+* missing categories  
+* invalid item indices for the chosen category  
+* unsupported update fields  
+* empty updated names or empty bin locations  
+* invalid quantities  
+* invalid expiry-date values  
+
+This layered design ensures invalid input is rejected early, while still protecting the command layer  
+from invalid runtime state.
+
+#### Alternatives considered
+
+Several alternatives were considered when implementing this feature.
+
+* Alternative 1: Delete and re-add the item instead of supporting update.  
+  This was rejected because it is less convenient for the user and makes small corrections unnecessarily  
+  verbose.
+
+* Alternative 2: Create a separate command for each field, such as `UpdateQuantityCommand` or  
+  `UpdateExpiryDateCommand`.  
+  This was rejected because it would significantly increase the number of command classes and make the  
+  design more fragmented.
+
+* Alternative 3: Allow the parser to mutate the item directly.  
+  This was rejected because it breaks the separation between parsing and execution. Parsers should  
+  interpret input, while commands should perform behaviour.
+
+---
+
+#### Current limitations
+
+The current implementation has some limitations.
+
+* Only shared item fields are updatable: `newItem/`, `bin/`, `qty/`, and `expiryDate/`. Category-specific  
+  fields such as `size/`, `brand/`, or `isRipe/` cannot currently be updated.  
+* Unsupported fields cause the command to fail instead of being ignored.  
+* The command depends on item indices, so the user may need to run `list` or `find` beforehand to  
+  determine the correct target item.  
+* Updating one item does not currently show the full updated item record after completion.  
+
+These limitations are acceptable for the current project scope, but they highlight possible areas for  
+future enhancement.
+
+---
+
+#### Possible future improvements
+
+If this feature is extended in future versions, the following improvements could be considered:
+
+* Support updates to category-specific fields such as `size/`, `brand/`, `flavour/`, or `isRipe/`.  
+* Show the full updated item details after a successful edit.  
+* Support updating multiple matched items in batch mode.  
+* Replace index-based targeting with more flexible item matching and disambiguation.
+
 ### List Feature
 
 The product also supports displaying the current inventory using the `list` command.
@@ -872,7 +1265,349 @@ If this feature is extended in future versions, the following improvements could
 - Add pagination or condensed summaries for larger inventories.
 - Reuse the same command object for alternate UI front ends if the presentation layer expands.
 
+### Sort Feature
 
+The product also supports displaying the current inventory with items sorted within each category using 
+the `sort` command.
+
+This feature is useful because users may want to inspect the inventory from a different perspective without changing 
+the actual stored order of items. For example, a user may want to see which items are expiring earliest, which items 
+have the lowest quantity or items in alphabetical order. The sort command solves this by generating a sorted view 
+of the inventory while keeping items group under their original categories.
+
+For example, if the user enters`sort expirydate`, the system displays all categories as usual, but the items inside 
+each category are shown in ascending expiry date order, allowing the user to quickly identify items that are
+expiring soon.
+
+#### High-level design
+
+This feature extends the existing command-based architecture used by the product. The flow is as follows:
+
+1. The user enters a `sort` command followed by a sort type.
+2. `Parser` recognises the sort command word and delegates the argument to `SortCommandParser`.
+3. `SortCommandParser` validates the sort type and creates a `SortCommand`.
+4. `InventoryDock` executes the command with access to the current `Inventory` and `UI`.
+5. `SortCommand` prepares the sorted view of the inventory.
+6. `UI` displays the sorted inventory while preserving the group by category structure.
+
+This design was chosen because it keeps sorting behaviour within the normal parse then execute command pipeline
+used throughout the application. It also allows the feature to reuse the existing inventory display format instead of
+introducing a completely separate output style.
+
+#### Component-level implementation
+
+The feature is mainly implemented using the following classes:
+
+- `Parser`
+- `SortCommandParser`
+- `SortCommand`
+- `Inventory`
+- `Category`
+- `Item`
+- `UI`
+
+The responsibilities these classes are as follows:
+
+- `Parser` detects the `sort` command and delegates argument parsing to `SortCommandParser`.
+- `SortCommandParser` validates the user supplied sort type and constructs the corresponding command.
+- `SortCommand` performs the sorting preparation and triggers the display behaviour.
+- `Inventory` provides access to the currently stored categories.
+- `Category` provides access to the items stored under each category.
+- `Item` provides the fields used for comparison such as name, expiry date and quantity.
+- `UI` formats and prints the sorted inventory view.
+
+This design keeps parsing, sorting and presentation responsibilities separate, The parser only interprets
+the command, the command prepares the sorted result and the UI remains responsible for rendering it.
+
+#### Command execution flow
+
+When `SortCommand.execute()` is called the implementation performs the following sequence:
+
+1. Assert that `inventory`, `ui` and `sortType` are not `null`.
+2. Retrieve all categories from the `Inventory`.
+3. For each category, make a copy of items item list.
+4. Sort the copied list using the comparator that matches the requested sort type.
+5. Store the sorted lists in the same category order as the original inventory.
+6. Call `ui.showSortedInventory(inventory, sortedItemsByCategory, sortLabel)`.
+7. UI displays the categories in their original order and prints each category's sorted item list.
+
+This means the command does not directly modify the order of items stored inside the actual inventory. Instead, it
+prepares a sorted view for display.
+
+The main interaction for this flow is illustrated below.
+
+![SortingMainFlow](diagrams/sequence/SortingMainFlow.png)
+
+The main structural relationships for this feature are shown below.
+
+![SortingClassDiagram](diagrams/class/SortingClassDiagram.png)
+
+A representative object snapshot for this feature is shown below.
+
+![SortingObjectDiagram](diagrams/object/SortingObjectDiagram.png)
+
+#### Sorting logic
+
+The sorting behaviour depends on the user provided sort type.
+
+- `name`: Sorts items alphabetically by item name, ignoring letter case.
+- `expirydate`: Sorts items by expiry date in ascending order, so earlier expiry dates appear first.
+- `qty`: Sorts items by quantity in descending order, so larger quantities appear first.
+
+For expiry-date sorting, the command relies on date parsing rather than raw string comparison. This is important
+because proper date parsing ensures dates are compared logically rather than lexicographically.
+
+A simplified version of the sorting approach is:
+
+```java
+List<Item> sortedItems = new ArrayList<>(category.getItems());
+sortedItems.sort(getComparator());
+```
+
+The sorted item lists are then passed to the UI for display.
+
+#### Why the feature is implemented this way
+
+The most important design choice in this feature is that sorting is performed on copied item lists instead of
+changing the order of items inside the actual inventory.
+
+This was chosen for three reasons.
+
+First, the feature is intended to provide an alternative view of the inventory rather than mutate the underlying data.
+A user who runs `sort name` is usually asking to inspect the data in a different order, not to permanently reorder the
+stored inventory.
+
+Second, it avoids unintended side effects. If the underlying item order were modified directly, later commands that
+depend on the original ordering, such as deletion or updating by index, could behave differently in ways the user
+did not expect.
+
+Third, it keeps the implementation simple and safe. By sorting copies of the item lists, the command can generate the
+desired output without changing the model state.
+
+Another deliberate design choice is that the category order is preserved. Only the items within each category are
+sorted. This keeps the output structure familiar and consistent with the normal `list` command.
+
+#### Error handling and validation
+
+Input validation is handled mainly by `SortCommandParser`.
+
+If the user enters `sort` without providing a sort type, the parser throws a `InventoryDockException` indicating that a valid
+sort type is required.
+
+If the user provides an unsupported sort type, the parser throws a `InventoryDockException` listing the valid options,
+such as `name`, `expirydate`, and `qty`.
+
+At execution time, the command handles an empty inventory gracefully. The UI displays the appropriate empty inventory
+message instead of failing.
+
+#### Alternatives considered
+
+Several alternatives were considered when implementing this feature.
+
+Alternative 1: Permanently reorder items inside each category.
+
+This was rejected because the sort command is intended as a display oriented feature rather than a data mutation
+feature. Permanently changing the stored order could make other index based commands less predictable.
+
+Alternative 2: Extend the `list` command to accept optional sorting arguments.
+
+This was rejected because it would complicate the behaviour of `list`, which is currently simple and predictable.
+Keeping `sort` as a separate command makes each command’s purpose clearer.
+
+Alternative 3: Sort both categories and items.
+
+This was rejected because the primary user need is to inspect items within each category more easily. Reordering
+categories as well would make the output less consistent with the rest of the application.
+
+#### Current limitations
+
+The current implementation has some limitations.
+
+- It only supports one sorting criterion at a time.
+- It preserves category order and does not sort categories themselves.
+- It depends on valid item data for correct field comparison, especially for expiry-date sorting.
+- It currently only support fix direction of sorting, user cannot choose ascending or descending.
+
+These limitations are acceptable for the current project scope.
+
+#### Possible future improvements
+
+If this feature is extended in future versions, the following improvements could be considered:
+
+- Support multi-level sorting such as sorting by expiry date and then by name.
+- Allow categories themselves to be sorted optionally.
+- Support ascending and descending variants for each sort type.
+
+### Storage feature
+
+This product includes a storage component that is responsible for persisting inventory data
+between application runs.
+
+This component is necessary because the inventory should not be lost when the program exits, as
+users expect their items to remain available the next time they launch the application.
+
+The storage feature solves this by writing the current inventory to a file and reconstructing it
+when the application starts again.
+
+#### Implementation
+
+The storage mechanism is facilitated by `Storage`, which is responsible for saving the current `Inventory`
+to file and loading it back into memory.
+
+It supports two main operations:
+
+- `save(Inventory inventory)` which writes the current inventory to the storage file.
+- `load(Inventory inventory, UI ui)` which reads the storage file and reconstructs the inventory state.
+
+The save format is text-based. Each item is stored on a separate line together with its common fields and any
+additional fields required by its specific category. This allows all supported item types to be saved in a
+single format while preserving the extra data needed for each subtype.
+
+The main structural relationships for the storage feature are shown below.
+
+![StorageClassDiagram](diagrams/class/StorageClassDiagram.png)
+
+#### Saving execution flow
+
+When the application saves, `Storage` performs the following sequence:
+1. Open the data file for writing.
+2. Retrieve all categories from the inventory.
+3. Iterate through each `Category`.
+4. Within each category, iterate through each `Item`.
+5. Convert each item into a formatted text line.
+6. Write the formatted line into the file.
+7. Repeat until all items have been written.
+8. Close the file.
+
+The formatting logic is delegated to the `Item` class via polymorphism, instead of being centralized
+in the `Storage` class.
+
+A simplified example of the base formatting logic is:
+```java
+public String toStorageString(String categoryName) {
+    return "category/" + categoryName
+            + " item/" + name
+            + " bin/" + binLocation
+            + " qty/" + quantity
+            + " expiryDate/" + expiryDate;
+}
+```
+
+Subclasses extend this behaviour by appending their own fields. For example, the `Fruit` class
+adds additional attributes:
+```java
+public String toStorageString(String categoryName) {
+    return super.toStorageString(categoryName)
+            + " size/" + size
+            + " isRipe/" + isRipe;
+}
+```
+
+This design ensures that each subclass is responsible for serializing its own data,
+while the `Storage` class remains independent of specific item types.
+
+The main interaction for this flow is illustrated below.
+
+![StorageSavingMainFlow](diagrams/sequence/StorageSavingMainFlow.png)
+
+A representative object snapshot for the storage loading workflow is shown below.
+
+![StorageSavingObjectDiagram](diagrams/object/StorageSavingObjectDiagram.png)
+
+#### Loading execution flow
+
+When the application loads data from file, `Storage` performs the following sequence:
+1. Ensure the storage file exists. If not, it is created automatically.
+2. Read the file line by line.
+3. Extract the category from the line.
+4. Use the category to determine the appropriate parsing method.
+5. Convert the line into a `Command` using `AddItemCommandParser`.
+6. Execute the command to reconstruct the item in the inventory.
+7. Skip malformed lines where appropriate.
+8. Continue until the entire file has been processed.
+
+This design allows the application to reconstruct the same logical inventory state from the
+saved text data.
+
+The loading process depends on the file format remaining consistent with the save format.
+Since both directions are controlled by `Storage`, the implementation can ensure that the data
+written is also the data that can be read back correctly.
+
+This approach reuses existing parsing logic, ensuring consistency between user input handling and
+stored data reconstruction.
+
+The main interaction for this flow is illustrated below.
+
+![StorageLoadingMainFlow](diagrams/sequence/StorageLoadingMainFlow.png)
+
+A representative object snapshot for the storage loading workflow is shown below.
+
+![StorageLoadingObjectDiagram](diagrams/object/StorageLoadingObjectDiagram.png)
+
+#### Error handling and validation
+
+The storage component also handles cases where the save file is missing, or contains invalid data.
+
+If the file does not exist, the application can start with an empty inventory instead of
+crashing. This is because the absence of a save file may simply mean that the program is being
+run for the first time.
+
+If a line is malformed, the exception is caught and the line is skipped. A warning is
+logged and the user is informed via the UI, detailing the line that was skipped and the
+reason for skipping.
+
+#### Why the storage component is implemented this way
+
+The simple text-based format is chosen instead of a more complex format such as JSON or database
+for several reasons.
+
+First, this keeps the implementation lightweight. The project does not require any external
+libraries or database setup, which makes the application easier to develop and test.
+
+Second, the saved data is readable which is useful during debugging because we can inspect the
+contents of the file directly and verify whether items are being written correctly.
+
+Third, the amount of data in the application is relatively small. Hence, a plain text file is
+sufficient and avoids unnecessary complexity.
+
+#### Alternatives considered
+
+Alternative 1: Store each category in a separate file.
+
+This could improve file organization, especially if categories become large. It was rejected because
+it would make file management more complicated and require the application to coordinate multiple
+save files instead of just one.
+
+Alternative 2: Use JSON format.
+
+This would make the file structure more standardized. However, it was rejected because it would
+introduce additional complexity which is unnecessary for our project scope.
+
+#### Current limitations
+
+The current storage implementation has several limitations.
+
+1. The storage system relies on a fixed text format with prefixes such as `category/`, `item/`.
+   If the format is modified or corrupted, the parser may fail to reconstruct the item correctly.
+2. During loading, each stored line is converted into a Command using `AddItemCommandParser` and executed.
+   While this ensures consistency with user input handling, it introduces coupling between storage logic and
+   command parsing logic. Any changes in parsing behaviour may affect the loading process.
+3. Malformed or corrupted lines are skipped during loading. While this prevents crashes, it may result
+   in data loss and incomplete reconstruction of the inventory.
+
+For the current version of the application, these limitations are acceptable, but they may become
+relevant if the system grows more complex.
+
+#### Possible future improvements
+
+The following enhancements can be considered to improve the storage component.
+
+1. Introduce structured storage format, such as JSON. This will help to improve robustness and
+   make format easier to extend.
+2. The system could directly construct `Item` objects instead of converting stored lines into
+   commands. This would reduce coupling and improve clarity of storage logic.
+3. Instead of skipping malformed lines completely, the system could attempt partial recovery and
+   provide more detailed diagnostics to the user. This would reduce potential data loss.
 
 ### Testing delete category
 
@@ -1030,5 +1765,79 @@ After setting up the application, proceed to the individual test cases below.
 8. Run `find category/toiletries` for a category that does not exist.
 9. Verify that the application shows the category-not-found message.
 
+### Testing find by expiry date
 
+1. Add items with different expiry dates.
+2. Run `find expiryDate/2026-3-25`.
+3. Verify that only items expiring on or before `2026-3-25` are shown.
+4. Run `find expiryDate/2026-3-01`.
+5. Verify that the application shows `No items found expiring by 2026-3-01.` when there are no matches.
+6. Run `find expiryDate/2026/3/25`.
+7. Verify that the application shows the invalid date format error.
+8. Run `find expiryDate/`.
+9. Verify that the application shows the missing expiry date error.
+
+
+### Testing update feature
+
+1. Run `update category/fruits index/1 newItem/green_apple bin/A2 expiryDate/2026-5-01`
+2. Verify that:
+  * The item name is updated to green_apple  
+  * The bin location is updated to A2  
+  * The expiry date is updated to 2026-5-01  
+3. Run `list`.
+4. Verify that all updated fields are reflected correctly.
+5. Run `update category/unknown index/1 qty/10`
+6. Verify that the application shows  `Category not found: unknown` or the corresponding error message.
+7. Run `update category/fruits index/100 qty/10`
+8. Verify that the application shows an error indicating the index is out of range.
+9. Run `update category/fruits index/abc qty/10`
+10. Verify that the application shows `Item index must be an integer.`
+11. Run `update category/fruits index/1`
+12. Verify that the application shows `Provide at least one field to update.`
+13. Run `update index/1 qty/10`
+14. Verify that the application shows `Missing category.`
+15. Run `update category/fruits qty/10`
+16. Verify that the application shows `Missing item index.`
+17. Run `update category/fruits index/1 qty/-5`
+18. Verify that the application shows `Quantity must be a positive integer.`
+19. Run `update category/fruits index/1 expiryDate/2026/05/01`
+20. Verify that the application shows `Invalid date. Please use yyyy-M-d.`
+21. Run `update category/fruits index/1 bin/`
+22. Verify that the application shows an error for missing bin location.
+23. Run `update category/fruits index/1 size/large`
+24. Verify that the application shows  
+  `Unsupported field: size` (or corresponding error message).
+
+### Testing Sort Command
+1. Add several items into at least one category with different names, expiry dates, and quantities.
+2. Run `sort name`.
+3. Verify that items within each category are shown in alphabetical order by name.
+4. Run `sort expirydate`.
+5. Verify that items within each category are shown from earliest to latest expiry date.
+6. Run `sort qty`.
+7. Verify that items within each category are shown from highest to lowest quantity.
+8. Run `sort invalidType`.
+9. Verify that the application shows the appropriate invalid sort type error message.
+10. Run `sort` with no argument.
+11. Verify that the application shows the missing sort type error message.
+12. Run the command on an empty inventory.
+13. Verify that the application handles it without crashing and displays the appropriate empty state.
+
+### Testing storage
+
+1. Add several items to the inventory.
+2. Exit the application using the `bye` command.
+3. Reopen the application.
+4. Run `list`.
+5. Verify that all items are restored with their correct category specific fields.
+6. Exit the application using the `bye` command.
+7. Modify the storage file so that a line is missing the `category/` field.
+8. Reopen the application.
+9. Verify that the application skips the malformed line and displays the appropriate error message.
+10. Run `list`.
+11. Verify that the remaining valid items are loaded correctly.
+12. Exit the application using the `bye` command.
+13. Delete the storage file before launching the application.
+14. Verify that the application recreates the file automatically and starts without crashing.
 
