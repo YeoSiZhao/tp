@@ -1,0 +1,35 @@
+@startuml
+title Sequence Diagram for FindItemByBinCommand (Inventory Scan and Matching)
+
+autonumber
+hide footbox
+
+participant ":FindItemByBinCommand" as FindItemByBinCommand
+participant ":Inventory" as Inventory
+participant ":Category" as Category
+participant ":Item" as Item
+
+FindItemByBinCommand -> Inventory: getCategories()
+activate Inventory
+Inventory --> FindItemByBinCommand: categories
+deactivate Inventory
+
+loop for each category
+    FindItemByBinCommand -> Category: getItems()
+    activate Category
+    Category --> FindItemByBinCommand: items
+    deactivate Category
+
+    loop for each item
+        FindItemByBinCommand -> Item: getBinLocation()
+        activate Item
+        Item --> FindItemByBinCommand: itemBinLocation
+        deactivate Item
+
+        FindItemByBinCommand -> FindItemByBinCommand: isMatchingBin(itemBinLocation, binInput)
+        activate FindItemByBinCommand
+        FindItemByBinCommand --> FindItemByBinCommand
+        deactivate FindItemByBinCommand
+    end
+end
+@enduml

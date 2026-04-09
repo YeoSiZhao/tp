@@ -1,0 +1,25 @@
+@startuml
+title Sequence Diagram for FindItemByBinCommand (Result Display)
+
+autonumber
+hide footbox
+
+actor User
+participant ":FindItemByBinCommand" as FindItemByBinCommand
+participant ":UI" as UI
+
+alt matches is empty
+    FindItemByBinCommand -> UI: showMessage("No items found ...")
+    activate UI
+    UI --> User: display no-match message
+    deactivate UI
+else matches found
+    FindItemByBinCommand -> UI: showDivider()
+    activate UI
+    FindItemByBinCommand -> UI: showMessage("Items in bin location ...")
+    FindItemByBinCommand -> UI: showNumberedList(matches)
+    FindItemByBinCommand -> UI: showDivider()
+    UI --> User: display matching items
+    deactivate UI
+end
+@enduml

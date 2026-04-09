@@ -677,9 +677,19 @@ is as follows:
 4. The command is executed with access to the current `Inventory` and `UI`.
 5. The command scans the inventory, identifies matching bin locations, and displays the result.
 
-The main interaction for this flow is illustrated below.
+The interaction for this flow is split into focused sequence diagrams below.
 
-![FindItemByBinCommandMainFlow](diagrams/sequence/FindItemByBinCommandMainFlow-Sequence_Diagram_for_FindItemByBinCommand__Main_Control_Flow_Only_.png)
+1. Parse and command creation (UI -> Parser -> FindItemParser -> BinLocationParser -> FindItemByBinCommand).
+
+![FindItemByBinCommandParseFlow](diagrams/sequence/FindItemByBinCommandParseFlow.png)
+
+2. Inventory scanning and bin matching (FindItemByBinCommand iterates through Inventory, Category, and Item).
+
+![FindItemByBinCommandMatchingFlow](diagrams/sequence/FindItemByBinCommandMatchingFlow.png)
+
+3. Result display branching (no-match message vs. matched-items output through UI).
+
+![FindItemByBinCommandDisplayFlow](diagrams/sequence/FindItemByBinCommandDisplayFlow.png)
 
 The main structural relationships for this feature are shown below.
 
@@ -717,7 +727,7 @@ user input and constructing the correct command object.
 
 #### Command execution flow
 
-When `FindItemByBinCommand.execute()` is called, the implementation performs the following sequence:
+When `FindItemByBinCommand.execute()` is called, the implementation (shown in the matching and display diagrams above) performs the following sequence:
 
 1. Assert that `inventory`, `ui`, and `binInput` are not `null`.
 2. Create an empty `List<Item>` named `matches`.
@@ -2483,3 +2493,8 @@ After setting up the application, proceed to the individual test cases below.
 8. Run `find keyword/mango`.
 9. Verify that the application shows `No items found matching keyword: mango.` when there are no
    matches.
+
+
+
+
+
