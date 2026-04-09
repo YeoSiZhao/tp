@@ -909,12 +909,12 @@ This sequence diagram is drawn by Luke(lukeluoyu)
 
 The main structural relationships for this feature are shown below.
 
-![FindItemByQtyCommandClassDiagram](diagrams/class/FindItemByQtyCommandClassDiagram.png)
+![FindItemByQtyCommandClassDiagram](diagrams/class/FindItemByQtyCommandClassDiagram-Class_Diagram_for_FindItemByQtyCommand_Feature.png)
 This class diagram is drawn by Luke(lukeluoyu)
 
 A representative object snapshot for this feature is shown below.
 
-![FindItemByQtyCommandObjectDiagram](diagrams/object/FindItemByQtyCommandObjectDiagram.png)
+![FindItemByQtyCommandObjectDiagram](diagrams/object/FindItemByQtyCommandObjectDiagram-Object_Diagram_for_one_execution_of_FindItemByQtyCommand.png)
 This object diagram is drawn by Luke(lukeluoyu)
 
 The key comparison is:
@@ -2493,6 +2493,7 @@ After setting up the application, proceed to the individual test cases below.
 8. Run `find keyword/mango`.
 9. Verify that the application shows `No items found matching keyword: mango.` when there are no
    matches.
+
 
 
 
