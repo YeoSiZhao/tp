@@ -68,7 +68,9 @@ I also added the following UML diagrams:
 Sequence diagrams:
 - [DeleteItemCommandMainFlow.puml](../diagrams/sequence/DeleteItemCommandMainFlow.puml)
 - [DeleteCategoryCommandMainFlow.puml](../diagrams/sequence/DeleteCategoryCommandMainFlow.puml)
-- [FindItemByKeywordCommandMainFlow.puml](../diagrams/sequence/FindItemByKeywordCommandMainFlow.puml)
+- [FindItemByKeywordCommandParseFlow.puml](../diagrams/sequence/FindItemByKeywordCommandParseFlow.puml)
+- [FindItemByKeywordCommandMatchingFlow.puml](../diagrams/sequence/FindItemByKeywordCommandMatchingFlow.puml)
+- [FindItemByKeywordCommandDisplayFlow.puml](../diagrams/sequence/FindItemByKeywordCommandDisplayFlow.puml)
 - [HelpCommandMainFlow.puml](../diagrams/sequence/HelpCommandMainFlow.puml)
 
 Class diagrams:
@@ -94,4 +96,5 @@ Object diagrams:
 
 - [PR #101 review comment](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/101#issuecomment-4174049960)
 - [PR #103 review comment](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/103#issuecomment-4174048971)
+
 
