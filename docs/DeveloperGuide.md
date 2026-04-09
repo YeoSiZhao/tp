@@ -5,12 +5,13 @@
 1. [Acknowledgements](#acknowledgements)
 2. [Design and Implementation](#design--implementation)
    - [Exception Hierarchy](#exception-hierarchy)
-   - [Find Item by Expiry Date](#find-item-by-expiry-date-feature)
-   - [Find Item by Category](#find-item-by-category-feature)
-   - [Find Item by Bin](#find-item-by-bin-feature)
-   - [Find Item by Quantity](#find-item-by-quantity-feature)
-   - [Find Item by Keyword](#find-item-by-keyword-feature)
    - [Add Item Feature](#add-item-feature)
+   - [Find Feature](#find-feature)
+     - [Find By Expiry Date](#find-by-expiry-date)
+     - [Find By Category](#find-by-category)
+     - [Find By Bin](#find-by-bin)
+     - [Find By Quantity](#find-by-quantity)
+     - [Find By Keyword](#find-by-keyword)
    - [Update Item Feature](#update-item-feature)
    - [List Feature](#list-feature)
    - [Sort Feature](#sort-feature)
@@ -111,9 +112,21 @@ application. The feature follows this flow:
 5. An `AddItemCommand` is created and executed with access to the current `Inventory` and `UI`.
 6. The command finds the target category, inserts the item, and shows a confirmation message.
 
-The main interaction for this flow is illustrated below.
+The interaction for this flow is split into focused sequence diagrams below.
 
-![AddItemCommandMainFlow](diagrams/sequence/AddItemCommandMainFlow-Sequence_Diagram_for_AddItemCommand__Main_Control_Flow_Only_.png)
+1. Parse routing and category dispatch.
+
+![AddItemCommandParseRoutingFlow](diagrams/sequence/AddItemCommandParseRoutingFlow.png)
+
+2. Fruit parsing and command creation.
+
+![AddItemCommandFruitParsingFlow](diagrams/sequence/AddItemCommandFruitParsingFlow.png)
+
+
+
+3. Execution and result display.
+
+![AddItemCommandExecutionDisplayFlow](diagrams/sequence/AddItemCommandExecutionDisplayFlow.png)
 
 The main structural relationships for this feature are shown below.
 
@@ -273,849 +286,152 @@ If this feature is extended in future versions, the following improvements could
 - Support optional default values for selected fields where domain rules permit them.
 - Separate category definitions from parser code so new item types can be added with less wiring.
 
-### Find Item By Expiry Date Feature
+### Find Feature
 
-One enhancement added to the product is the ability to find items by expiry date using the command
-`find expiryDate/DATE`.
+The product provides a family of `find` commands that share a common flow:
 
-This feature was introduced because the inventory is centered around storing physical goods, many of
-which are perishable or time-sensitive. In this context, searching by name alone is not sufficient.
-A user may know that some products are expiring soon, but may not remember the exact names or which
-category they were placed under. The expiry-date search solves this by letting the user enter a cutoff
-date and retrieve every item expiring on or before that date.
+1. `FindItemParser` reads the find prefix and value.
+2. The parser constructs a find-specific command.
+3. The command executes against `Inventory`.
+4. Results are displayed through `UI`.
 
-For example, if the user enters `find expiryDate/2026-3-25`, the system returns all items with expiry
-dates earlier than `2026-3-25` as well as items expiring exactly on `2026-3-25`.
+This section consolidates all find subfeatures and highlights only each subfeature's unique matching logic.
 
-#### High-level design
+Contributor acknowledgement for this Find section:
+- Find by category and find by bin: Wang Chuhao.
+- Find by quantity: Luke Louyu.
+- Find by keyword: KOIiiii07.
+- Find by expiry date: Yeo Si Zhao.
 
-At a high level, this enhancement reuses the existing command-based architecture of the application.
-The feature fits naturally into the existing flow:
+#### Find By Expiry Date
 
-1. The user enters a `find` command.
-2. `FindItemParser` inspects the prefix after `find`.
-3. If the prefix is `expiryDate/`, the parser creates a `FindItemByExpiryDateCommand`.
-4. The command is executed with access to the current `Inventory` and `UI`.
-5. The command scans the inventory and prints the matching results.
+Command format: `find expiryDate/DATE`
 
-This design was chosen because it follows the same separation of concerns already used in the project:
+Contributed by: Yeo Si Zhao.
 
-- Parsers are responsible for interpreting user input.
-- Command classes are responsible for application behaviour.
-- Model classes store inventory data.
-- `UI` is responsible for displaying the result to the user.
+Sequence diagrams:
 
-As a result, the new enhancement could be added without changing the overall architecture of the system.
-It is an extension of the existing command pipeline rather than a separate subsystem.
+1. Parse and command creation.
 
-The main interaction for this flow is illustrated below.
+![FindItemByExpiryDateCommandParseFlow](diagrams/sequence/FindItemByExpiryDateCommandParseFlow.png)
 
-![FindItemByExpiryDateCommandMainFlow](diagrams/sequence/FindItemByExpiryDateCommandMainFlow.png)
+2. Date parsing and matching.
 
-The main structural relationships for this feature are shown below.
+![FindItemByExpiryDateCommandMatchingFlow](diagrams/sequence/FindItemByExpiryDateCommandMatchingFlow.png)
+
+3. Result display.
+
+![FindItemByExpiryDateCommandDisplayFlow](diagrams/sequence/FindItemByExpiryDateCommandDisplayFlow.png)
+
+Class and object diagrams:
 
 ![FindItemByExpiryDateCommandClassDiagram](diagrams/class/FindItemByExpiryDateCommandClassDiagram.png)
 
-A representative object snapshot for this feature is shown below.
-
 ![FindItemByExpiryDateCommandObjectDiagram](diagrams/object/FindItemByExpiryDateCommandObjectDiagram.png)
 
-#### Component-level implementation
+#### Find By Category
 
-The feature is mainly implemented using the following classes:
+Command format: `find category/CATEGORY`
 
-- `FindItemParser`
-- `FindItemByExpiryDateCommand`
-- `DateParser`
-- `Inventory`
-- `Category`
-- `Item`
+Contributed by: Wang Chuhao.
 
-The responsibilities of these classes are as follows:
+Sequence diagrams:
 
-- `FindItemParser` recognises that the user wants to perform a search based on expiry date.
-- `FindItemByExpiryDateCommand` performs the actual search logic.
-- `DateParser` ensures that the provided date is valid and converts it into a `LocalDate`.
-- `Inventory` exposes the list of categories currently stored.
-- `Category` exposes the list of items belonging to that category.
-- `Item` provides each stored item's expiry date.
+1. Parse and command creation.
 
-The parser logic is intentionally simple. After splitting the input around the first `/`, it checks the
-left-hand side to determine what type of find command the user requested. If the type is `expirydate`,
-it returns a new `FindItemByExpiryDateCommand`.
+![FindItemByCategoryCommandParseFlow](diagrams/sequence/FindItemByCategoryCommandParseFlow.png)
 
-This means the parser does not perform the date comparison itself. Instead, it only constructs the
-correct command object. This keeps parsing logic lightweight and pushes business logic into the command
-layer, where it belongs.
+2. Category lookup.
 
-#### Command execution flow
+![FindItemByCategoryCommandMatchingFlow](diagrams/sequence/FindItemByCategoryCommandMatchingFlow.png)
 
-When `FindItemByExpiryDateCommand.execute()` is called, the implementation performs the following sequence:
+3. Result display.
 
-1. Assert that `inventory`, `ui`, and `expiryDateInput` are not `null`.
-2. Convert the user-supplied date into a `LocalDate` by calling `DateParser.parseDate(expiryDateInput)`.
-3. Create an empty `List<String>` named `matches` to store formatted search results.
-4. Retrieve all categories from the `Inventory`.
-5. Iterate through each `Category`.
-6. Within each category, iterate through each `Item`.
-7. Read the item's expiry date using `item.getExpiryDate()`.
-8. Skip that item if the expiry date is `null`.
-9. Parse the item's expiry date into a `LocalDate`.
-10. Compare the item's expiry date with the user-provided cutoff date.
-11. If the item date is not after the cutoff date, add a formatted result string to `matches`.
-12. After the scan is complete, either:
-13. Display a "no items found" message if `matches` is empty, or
-14. Print the list of matching items with numbering and dividers.
+![FindItemByCategoryCommandDisplayFlow](diagrams/sequence/FindItemByCategoryCommandDisplayFlow.png)
 
-The key comparison is:
-
-```java
-if (!itemDate.isAfter(cutoffDate)) {
-    matches.add(category.getName() + ": " + item);
-}
-```
-
-This logic means the search is inclusive. In other words, if an item expires on the exact cutoff date,
-it is still considered a match. This is the intended behaviour because users searching for items expiring
-"by" a certain date usually expect items on that date to be included.
-
-#### Why the feature is implemented this way
-
-The most important design choice in this enhancement is that the command performs a full scan of the
-inventory instead of relying on a precomputed data structure such as a sorted list, map, or expiry-date
-index.
-
-This was chosen for three reasons.
-
-First, it keeps the implementation small and easy to reason about. The inventory is already organized by
-category, and each category already stores its own list of items. Reusing that structure avoids adding
-new state that must be updated every time an item is added, deleted, or edited.
-
-Second, it reduces the risk of inconsistency. If an additional expiry-date index were introduced, the
-application would need to ensure that every mutation to the inventory also updates the index correctly.
-For a student project, the simpler design is more robust because there are fewer moving parts that can
-fall out of sync.
-
-Third, the expected inventory size is modest. A linear scan is acceptable for the current scale of the
-application. The extra complexity of a specialised indexing structure is not justified unless the number
-of items becomes large enough for search performance to become a real bottleneck.
-
-Another deliberate design decision is the use of `LocalDate` instead of comparing raw strings.
-Even though the input format looks sortable, relying on proper date parsing is safer and more maintainable.
-It guarantees that invalid dates are rejected early and ensures that comparisons remain logically correct.
-
-The implementation also ignores items whose expiry date is `null`. This was done to make the command
-resilient when scanning heterogeneous inventory data. Some items may not have expiry dates populated, and
-those items should not cause the search to fail. Instead, they are excluded from the result set because
-they do not carry the attribute being searched on.
-
-#### Error handling and validation
-
-Input validation is handled mainly by `DateParser`.
-
-If the user provides a missing or blank expiry date, `DateParser` throws a `InventoryDockException` with the
-message `Missing expiry date`.
-
-If the user provides an invalid format such as `2026/3/25`, `DateParser` throws a `InventoryDockException` with
-the message `Invalid date. Please use yyyy-M-d.`
-
-This design centralises date validation in one place instead of duplicating date checks across multiple
-commands. That improves consistency and makes future maintenance easier. If the date format requirement
-changes later, only `DateParser` needs to be updated.
-
-The parser also handles malformed `find` commands before the command object is created. For example, if
-the user enters `find expiryDate/` with no value after the slash, `FindItemParser` identifies the missing
-argument and reports invalid input to the UI.
-
-#### Alternatives considered
-
-Several alternatives were considered when implementing this enhancement.
-
-Alternative 1: Compare expiry dates as strings.
-
-This approach would have been shorter to implement because it avoids converting strings into `LocalDate`
-objects. However, it was rejected because string comparison is more fragile and tightly coupled to the
-exact formatting of the stored dates. Using `LocalDate` gives stronger correctness guarantees and clearer
-intent.
-
-Alternative 2: Store items in a separate expiry-date index.
-
-This approach could improve search performance by making lookups faster than a full scan, especially for
-larger inventories. It was rejected for now because it adds extra complexity to the data model. Every
-operation that modifies the inventory would also need to update the index, which increases implementation
-effort and introduces more opportunities for bugs.
-
-Alternative 3: Restrict expiry-date search to a single category at a time.
-
-This approach could reduce the scope of each search and align with the current category-based inventory
-organisation. It was rejected because it weakens the usefulness of the feature. Users usually care about
-which items are expiring soon across the entire inventory, not within one specific category.
-
-Alternative 4: Return only items expiring exactly on the given date.
-
-This would have made the search condition simpler and more literal. It was rejected because the use case
-is broader than exact-date matching. A cutoff-based search is more practical for inventory review and
-waste prevention because it supports questions like "Which items expire by the end of this week?"
-
-#### Current limitations
-
-The current implementation has some limitations.
-
-- It performs a full scan of the inventory each time the command is run.
-- It returns formatted strings rather than a structured result object.
-- It depends on expiry dates being stored in a valid format.
-- It does not sort the output by earliest expiry date; results follow the current category and item order.
-
-These limitations are acceptable for the current scope, but they identify possible directions for future
-enhancement.
-
-#### Possible future improvements
-
-If this feature is extended in future versions, the following improvements could be considered:
-
-- Sort matching items by expiry date before displaying them.
-- Highlight items that are already expired separately from items that are merely approaching expiry.
-- Support date ranges such as `find expiryDate/2026-3-01 to/2026-3-25`.
-- Add category filters so users can combine expiry search with category search.
-- Introduce an internal index if inventory size grows enough to justify optimisation.
-
-### Find Item By Category Feature
-
-Another search feature in the product is the ability to find items by category using the command
-`find category/CATEGORY`.
-
-This feature is useful because the inventory is organised around categories, and users often want to
-review all items stored within one category without scanning the entire inventory. In practice, this
-supports tasks such as checking what is currently stored under `fruits`, confirming that a category is
-empty, or verifying whether a category exists at all.
-
-For example, if the user enters `find category/fruits`, the system locates the `fruits` category and
-shows all items currently stored in it.
-
-#### High-level design
-
-At a high level, this feature reuses the existing command pipeline of the application. The flow is as
-follows:
-
-1. The user enters a `find` command.
-2. `FindItemParser` inspects the prefix before the `/`.
-3. If the prefix is `category`, the parser creates a `FindItemByCategoryCommand`.
-4. The command is executed with access to the current `Inventory` and `UI`.
-5. The command attempts to locate the matching category and displays either the items or an
-   appropriate message.
-
-The main interaction for this flow is illustrated below.
-
-![FindItemByCategoryCommandMainFlow](diagrams/sequence/FindItemByCategoryCommandMainFlow-Sequence_Diagram_for_FindItemByCategoryCommand__Main_Control_Flow_Only_.png)
-
-The main structural relationships for this feature are shown below.
+Class and object diagrams:
 
 ![FindItemByCategoryCommandClassDiagram](diagrams/class/FindItemByCategoryCommandClassDiagram.png)
 
-A representative object snapshot for this feature is shown below.
-
 ![FindItemByCategoryCommandObjectDiagram](diagrams/object/FindItemByCategoryCommandObjectDiagram.png)
 
-This design was chosen because it follows the same separation of concerns already used throughout the
-project:
+#### Find By Bin
 
-- Parsers interpret user input.
-- Command classes implement the application behaviour.
-- Model classes store inventory data.
-- `UI` is responsible for displaying the result to the user.
+Command format: `find bin/BIN`
 
-As a result, the category-search feature integrates cleanly into the existing architecture instead of
-requiring a separate retrieval subsystem.
+Contributed by: Wang Chuhao.
 
-#### Component-level implementation
+Sequence diagrams:
 
-The feature is mainly implemented using the following classes:
+1. Parse and command creation.
 
-- `FindItemParser`
-- `FindItemByCategoryCommand`
-- `Inventory`
-- `Category`
-- `Item`
+![FindItemByBinCommandParseFlow](diagrams/sequence/FindItemByBinCommandParseFlow.png)
 
-The responsibilities of these classes are as follows:
+2. Inventory scan and bin matching.
 
-- `FindItemParser` recognises that the user wants to search by category.
-- `FindItemByCategoryCommand` performs the lookup and prepares the result for display.
-- `Inventory` exposes a category lookup through `findCategoryByName(...)`.
-- `Category` exposes its stored items and name.
-- `Item` provides the item data shown in the final output.
+![FindItemByBinCommandMatchingFlow](diagrams/sequence/FindItemByBinCommandMatchingFlow.png)
 
-The parser logic remains intentionally small. It only determines the requested find type and creates
-an appropriate command object. The actual lookup is performed inside the command layer.
+3. Result display.
 
-#### Command execution flow
+![FindItemByBinCommandDisplayFlow](diagrams/sequence/FindItemByBinCommandDisplayFlow.png)
 
-When `FindItemByCategoryCommand.execute()` is called, the implementation performs the following
-sequence:
-
-1. Assert that `inventory`, `ui`, and `categoryInput` are not `null`.
-2. Call `inventory.findCategoryByName(categoryInput)`.
-3. If no category is found, call `ui.showCategoryNotFound(categoryInput)` and return.
-4. Retrieve the items from the matched category using `matched.getItems()`.
-5. If the item list is empty, display a no-items-found message for that category.
-6. Otherwise, display dividers, a heading, and the numbered item list.
-
-The core lookup logic is:
-
-```java
-Category matched = inventory.findCategoryByName(categoryInput);
-
-if (matched == null) {
-    ui.showCategoryNotFound(categoryInput);
-    return;
-}
-```
-
-This keeps the command focused on one responsibility: resolve the category, then display the result
-based on whether the category exists and whether it contains items.
-
-#### Why the feature is implemented this way
-
-The most important design choice in this feature is that category search is implemented as a direct
-category lookup instead of a full scan that compares every item's category name individually.
-
-This was chosen for three reasons.
-
-First, category is already a first-class concept in the data model. The inventory stores items under
-`Category` objects, so searching by category should begin from that structure rather than reconstruct
-it indirectly from the items.
-
-Second, it keeps the implementation small and readable. Once the category is found, the command can
-immediately retrieve its item list and display it.
-
-Third, it gives clearer user feedback. The command can distinguish between an existing category with no
-items and a category that does not exist at all. That distinction is useful in practice and would be
-harder to express cleanly if the implementation only scanned items globally.
-
-Another deliberate design choice is that category matching is delegated to `Inventory.findCategoryByName(...)`.
-This centralises the lookup logic in one place and avoids duplicating case-handling behaviour across
-multiple commands.
-
-#### Error handling and validation
-
-Input validation is handled mainly by `FindItemParser`.
-
-If the user enters `find` with no target, the parser throws a `MissingArgumentException` explaining the
-supported find formats.
-
-If the user enters `find category/` with no value after the slash, the parser throws a
-`MissingArgumentException` for the missing name before any command object is created.
-
-At execution time, `FindItemByCategoryCommand` handles two normal non-error outcomes explicitly:
-
-- If the category does not exist, `UI.showCategoryNotFound(...)` is used.
-- If the category exists but contains no items, the command shows `No items found in category: ...`.
-
-This makes the feature robust without treating common user situations as fatal runtime failures.
-
-#### Alternatives considered
-
-Several alternatives were considered when implementing this feature.
-
-Alternative 1: Scan every item in every category and collect items whose parent category name matches
-the input.
-
-This was rejected because the data model already stores items under categories directly. Reusing the
-existing category lookup is simpler and more coherent.
-
-Alternative 2: Return an error whenever the matched category is empty.
-
-This was rejected because an empty category is still a valid category state. Reporting it separately as
-"no items found" is more accurate and more helpful to the user.
-
-Alternative 3: Make category search case-sensitive.
-
-This was rejected because users should not need to remember the exact letter casing used internally.
-Case-insensitive matching produces a more forgiving command experience.
-
-#### Current limitations
-
-The current implementation has some limitations.
-
-- It returns items in the existing order stored in the category and does not apply sorting.
-- It depends on `Inventory.findCategoryByName(...)` for lookup semantics.
-- It only supports searching one category at a time.
-
-These limitations are acceptable for the current scope, but they indicate possible future extensions.
-
-#### Possible future improvements
-
-If this feature is extended in future versions, the following improvements could be considered:
-
-- Support partial category-name matching or suggestions for close matches.
-- Allow additional filtering within a category, such as by expiry date or bin location.
-- Support sorted output within the category listing.
-
-### Find Item By Bin Feature
-
-Another search feature in the product is the ability to find items by bin location using the command
-`find bin/BIN`.
-
-This feature is useful because physical inventory retrieval often starts from storage location rather
-than item name. A user may know that they need to inspect everything in bin `A-1`, or they may only
-remember the bin letter or number. The bin search feature solves this by allowing exact bin searches
-as well as searches by letter or number segment.
-
-For example, if the user enters `find bin/A-1`, the system returns only items stored in bin `A-1`.
-If the user enters `find bin/10`, the system returns items whose bin number is `10`, such as `A-10`
-and `B-10`.
-
-#### High-level design
-
-At a high level, this feature also reuses the command-based architecture of the application. The flow
-is as follows:
-
-1. The user enters a `find` command.
-2. `FindItemParser` inspects the prefix before the `/`.
-3. If the prefix is `bin`, the parser normalises the bin input using `BinLocationParser` and creates a
-   `FindItemByBinCommand`.
-4. The command is executed with access to the current `Inventory` and `UI`.
-5. The command scans the inventory, identifies matching bin locations, and displays the result.
-
-The main interaction for this flow is illustrated below.
-
-![FindItemByBinCommandMainFlow](diagrams/sequence/FindItemByBinCommandMainFlow-Sequence_Diagram_for_FindItemByBinCommand__Main_Control_Flow_Only_.png)
-
-The main structural relationships for this feature are shown below.
+Class and object diagrams:
 
 ![FindItemByBinCommandClassDiagram](diagrams/class/FindItemByBinCommandClassDiagram.png)
 
-A representative object snapshot for this feature is shown below.
-
 ![FindItemByBinCommandObjectDiagram](diagrams/object/FindItemByBinCommandObjectDiagram.png)
 
-This design was chosen because it allows bin-specific input normalisation to remain in the parser
-layer, while the matching and display behaviour stays in the command layer.
+#### Find By Quantity
 
-#### Component-level implementation
+Command format: `find qty/QUANTITY`
 
-The feature is mainly implemented using the following classes:
+Contributed by: Luke Louyu.
 
-- `FindItemParser`
-- `BinLocationParser`
-- `FindItemByBinCommand`
-- `Inventory`
-- `Category`
-- `Item`
+Sequence diagrams:
 
-The responsibilities of these classes are as follows:
+1. Parse and command creation.
 
-- `FindItemParser` recognises that the user wants to search by bin.
-- `BinLocationParser` normalises and validates the user-provided bin search input.
-- `FindItemByBinCommand` performs the inventory scan and matching logic.
-- `Inventory` exposes the list of stored categories.
-- `Category` exposes the items inside each category.
-- `Item` provides the bin location used during matching.
+![FindItemByQtyCommandParseFlow](diagrams/sequence/FindItemByQtyCommandParseFlow.png)
 
-The parser does not perform the inventory scan itself. Its responsibility is limited to interpreting the
-user input and constructing the correct command object.
+2. Inventory scan and quantity matching.
 
-#### Command execution flow
+![FindItemByQtyCommandMatchingFlow](diagrams/sequence/FindItemByQtyCommandMatchingFlow.png)
 
-When `FindItemByBinCommand.execute()` is called, the implementation performs the following sequence:
+3. Result display.
 
-1. Assert that `inventory`, `ui`, and `binInput` are not `null`.
-2. Create an empty `List<Item>` named `matches`.
-3. Retrieve all categories from the `Inventory`.
-4. Iterate through each `Category`.
-5. Within each category, iterate through each `Item`.
-6. Read each item's bin location using `item.getBinLocation()`.
-7. Call `isMatchingBin(itemBinLocation, binInput)` to determine whether the item matches.
-8. Add matching items to `matches`.
-9. After the scan, either display a no-items-found message or show the numbered result list.
+![FindItemByQtyCommandDisplayFlow](diagrams/sequence/FindItemByQtyCommandDisplayFlow.png)
 
-The key matching logic is:
+Class and object diagrams:
 
-```java
-if (binInput.contains("-")) {
-    return normalizedBinLocation.equals(binInput);
-}
+![FindItemByQtyCommandClassDiagram](diagrams/class/FindItemByQtyCommandClassDiagram-Class_Diagram_for_FindItemByQtyCommand_Feature.png)
 
-if (Character.isLetter(binInput.charAt(0))) {
-    return binLetter.equals(binInput);
-}
+![FindItemByQtyCommandObjectDiagram](diagrams/object/FindItemByQtyCommandObjectDiagram-Object_Diagram_for_one_execution_of_FindItemByQtyCommand.png)
 
-return binNumber.equals(binInput);
-```
+#### Find By Keyword
 
-This design supports three search modes using a single command:
+Command format: `find keyword/KEYWORD`
 
-- Exact bin search such as `A-1`
-- Bin-letter search such as `A`
-- Bin-number search such as `10`
+Contributed by: KOIiiii07.
 
-#### Why the feature is implemented this way
+Sequence diagrams:
 
-The most important design choice in this feature is the use of a full inventory scan combined with a
-small dedicated matching function, `isMatchingBin(...)`.
+1. Parse and command creation.
 
-This was chosen for three reasons.
+![FindItemByKeywordCommandParseFlow](diagrams/sequence/FindItemByKeywordCommandParseFlow.png)
 
-First, bin location is stored as part of each item rather than as a separate index. Reusing the
-existing inventory structure keeps the implementation simple.
+2. Inventory scan and keyword matching.
 
-Second, the matching rules are slightly richer than a plain string equality check. The command needs to
-support exact-bin, letter-only, and number-only searches, so isolating the logic in `isMatchingBin(...)`
-keeps the main execution flow readable.
+![FindItemByKeywordCommandMatchingFlow](diagrams/sequence/FindItemByKeywordCommandMatchingFlow.png)
 
-Third, the expected inventory size is small enough that a linear scan is acceptable. Introducing a more
-complex location index would increase maintenance cost without enough practical benefit for the current
-project scope.
+3. Result display.
 
-Another deliberate design choice is that exact bin searches do not overmatch prefixes. For example,
-searching for `A-1` should not accidentally return items in `A-10`. This behaviour is important for
-physical storage accuracy.
+![FindItemByKeywordCommandDisplayFlow](diagrams/sequence/FindItemByKeywordCommandDisplayFlow.png)
 
-#### Error handling and validation
-
-Input validation is split between `FindItemParser` and `BinLocationParser`.
-
-`FindItemParser` rejects missing `find` targets and missing values after the `/`.
-
-`BinLocationParser` is responsible for normalising the bin search input before the command is created.
-This ensures that the command operates on a consistent representation of the search term.
-
-At execution time, `FindItemByBinCommand` handles the no-match case gracefully by displaying
-`No items found in bin location: ...` instead of failing.
-
-This design keeps invalid-input handling close to parsing, while expected no-result searches are
-handled as normal command outcomes.
-
-#### Alternatives considered
-
-Several alternatives were considered when implementing this feature.
-
-Alternative 1: Support only exact full-bin matching.
-
-This would simplify the matching logic, but it was rejected because users may want to inspect all bins
-with the same letter or the same number.
-
-Alternative 2: Use raw substring matching on the stored bin location.
-
-This was rejected because it can produce incorrect overmatching. For example, searching for `A-1`
-would incorrectly match `A-10`.
-
-Alternative 3: Maintain a separate map from bin location to items.
-
-This was rejected because it introduces extra state that must be synchronised whenever items are added,
-updated, or deleted.
-
-#### Current limitations
-
-The current implementation has some limitations.
-
-- It performs a full scan of the inventory on every search.
-- It returns items in their existing inventory order.
-- It supports exact, letter, and number matching, but not more advanced patterns such as ranges.
-
-These limitations are acceptable for the current project scope.
-
-#### Possible future improvements
-
-If this feature is extended in future versions, the following improvements could be considered:
-
-- Support bin ranges or multi-bin queries.
-- Group results by category when displaying matches.
-- Introduce an internal location index if inventory size grows significantly.
-
-### Find Item By Quantity Feature
-
-Another search feature in the product is the ability to find items by quantity using the command
-`find qty/QUANTITY`.
-
-This feature is useful because inventory reviews often start from stock levels rather than item names.
-A user may want to identify low-stock items quickly, restock products below a threshold, or inspect all
-items whose quantity is at or below a target level. The quantity search feature solves this by allowing
-an inclusive threshold search.
-
-For example, if the user enters `find qty/15`, the system returns items with quantity `15` as well as
-items with smaller quantities such as `10` or `5`.
-
-#### High-level design
-
-At a high level, this feature reuses the same command-based architecture as the other `find` features.
-The flow is as follows:
-
-1. The user enters a `find` command.
-2. `FindItemParser` inspects the prefix before the `/`.
-3. If the prefix is `qty`, the parser validates the quantity using `CommonFieldParser.parseQuantity(...)`
-   and creates a `FindItemByQtyCommand`.
-4. The command is executed with access to the current `Inventory` and `UI`.
-5. The command scans the inventory, identifies items whose quantity is less than or equal to the input,
-   and displays the result.
-
-This design was chosen because it keeps quantity validation in the parser layer while keeping inventory
-scanning and threshold comparison in the command layer.
-
-
-#### Component-level implementation
-
-The feature is mainly implemented using the following classes:
-
-- `FindItemParser`
-- `CommonFieldParser`
-- `FindItemByQtyCommand`
-- `Inventory`
-- `Category`
-- `Item`
-
-The responsibilities of these classes are as follows:
-
-- `FindItemParser` recognises that the user wants to search by quantity.
-- `CommonFieldParser` validates that the quantity input is a positive integer.
-- `FindItemByQtyCommand` performs the inventory scan and threshold matching logic.
-- `Inventory` exposes the list of stored categories.
-- `Category` exposes the items inside each category.
-- `Item` provides the stored quantity used during matching.
-
-The parser does not perform the inventory scan itself. Its responsibility is limited to interpreting the
-user input and constructing the correct command object.
-
-#### Command execution flow
-
-When `FindItemByQtyCommand.execute()` is called, the implementation performs the following sequence:
-
-1. Assert that `inventory`, `ui`, and `qtyInput` are valid.
-2. Create an empty `List<Item>` named `matches` to store matching items.
-3. Retrieve all categories from the `Inventory`.
-4. Iterate through each `Category`.
-5. Within each category, iterate through each `Item`.
-6. Read the item's quantity using `item.getQuantity()`.
-7. Compare the item's quantity against the user-provided threshold.
-8. If the item quantity is less than or equal to the threshold, add the item to `matches`.
-9. After the scan is complete, either:
-10. Display a `no items found` message if `matches` is empty, or
-11. Print the list of matching items with numbering and dividers.
-
-The main interaction for this flow is illustrated below.
-
-![FindItemByQtyCommandMainFlow](diagrams/sequence/FindItemByQtyCommand_sequence-Sequence_Diagram_for_FindItemByQtyCommand__Main_Control_Flow_.png)
-This sequence diagram is drawn by Luke(lukeluoyu)
-
-The main structural relationships for this feature are shown below.
-
-![FindItemByQtyCommandClassDiagram](diagrams/class/FindItemByQtyCommandClassDiagram.png)
-This class diagram is drawn by Luke(lukeluoyu)
-
-A representative object snapshot for this feature is shown below.
-
-![FindItemByQtyCommandObjectDiagram](diagrams/object/FindItemByQtyCommandObjectDiagram.png)
-This object diagram is drawn by Luke(lukeluoyu)
-
-The key comparison is:
-
-```java
-if (item.getQuantity() <= qtyInput) {
-    matches.add(item);
-}
-```
-
-#### Design considerations
-
-Alternative 1: Require an exact quantity match.
-
-This was rejected because the more useful operational workflow is to find low-stock items at or below a
-threshold, rather than only items with one exact quantity value.
-
-Alternative 2: Support full comparison operators such as `<`, `<=`, `>`, and `>=`.
-
-This was rejected for now because it would complicate the parser and command syntax beyond the current
-scope of the product.
-
-#### Current limitations
-
-The current implementation has some limitations.
-
-- It only supports one-sided inclusive threshold matching using `<=`.
-- It returns items in the existing inventory order and does not sort by quantity.
-- It does not support combining quantity search with another filter in the same command.
-
-These limitations are acceptable for the current scope, but they indicate possible future extensions.
-
-#### Possible future improvements
-
-If this feature is extended in future versions, the following improvements could be considered:
-
-- Support explicit comparison operators such as `<`, `>`, or ranges.
-- Sort results by quantity so that the lowest-stock items appear first.
-- Allow quantity search to be combined with other filters such as category or expiry date.
-
-### Find Item By Keyword Feature
-
-Another search feature in the product is the ability to find items by keyword using the command
-`find keyword/KEYWORD`.
-
-This feature is useful because users often remember part of an item name but not its exact name or
-which category it belongs to. A keyword search provides a fast, flexible way to locate items across
-the entire inventory without needing to browse each category individually.
-
-For example, if the user enters `find keyword/apple`, the system returns all items whose names
-contain `apple`, such as `apple`, `pineapple`, and `apple_juice`, regardless of category.
-
-#### High-level design
-
-At a high level, this feature reuses the existing command pipeline of the application. The flow is
-as follows:
-
-1. The user enters a `find` command.
-2. `FindItemParser` inspects the prefix before the `/`.
-3. If the prefix is `keyword`, the parser creates a `FindItemByKeywordCommand`.
-4. The command is executed with access to the current `Inventory` and `UI`.
-5. The command scans all categories and items, collects matches, and displays the result.
-
-The main interaction for this flow is illustrated below.
-
-![FindItemByKeywordCommandMainFlow](diagrams/sequence/FindItemByKeywordCommandMainFlow-Sequence_Diagram_for_FindItemByKeywordCommand__Main_Control_Flow_Only_.png)
-
-The main structural relationships for this feature are shown below.
+Class and object diagrams:
 
 ![FindItemByKeywordCommandClassDiagram](diagrams/class/FindItemByKeywordCommandClassDiagram.png)
 
-A representative object snapshot for this feature is shown below.
-
 ![FindItemByKeywordCommandObjectDiagram](diagrams/object/FindItemByKeywordCommandObjectDiagram.png)
-
-This design was chosen because it follows the same separation of concerns already used throughout
-the project:
-
-- Parsers interpret user input.
-- Command classes implement the application behaviour.
-- Model classes store inventory data.
-- `UI` is responsible for displaying the result to the user.
-
-As a result, the keyword-search feature integrates cleanly into the existing find-command family
-without requiring a separate search subsystem.
-
-#### Component-level implementation
-
-The feature is mainly implemented using the following classes:
-
-- `FindItemParser`
-- `FindItemByKeywordCommand`
-- `Inventory`
-- `Category`
-- `Item`
-
-The responsibilities of these classes are as follows:
-
-- `FindItemParser` recognises that the user wants to search by keyword and creates the command.
-- `FindItemByKeywordCommand` performs the full inventory scan and substring matching.
-- `Inventory` exposes the list of categories currently stored.
-- `Category` exposes the list of items belonging to that category.
-- `Item` provides the item name used during matching.
-
-The parser logic remains intentionally small. It only determines the requested find type and
-constructs the appropriate command object. The actual search is performed inside the command layer.
-
-#### Command execution flow
-
-When `FindItemByKeywordCommand.execute()` is called, the implementation performs the following
-sequence:
-
-1. Assert that `inventory`, `ui`, and `keywordInput` are not `null`.
-2. Create an empty `List<String>` named `matches` to store formatted search results.
-3. Retrieve all categories from the `Inventory`.
-4. Iterate through each `Category`.
-5. Within each category, iterate through each `Item`.
-6. Compare the item's name (lowercased) against the keyword (lowercased) using `contains(...)`.
-7. If the item name contains the keyword, add a formatted string
-   `category.getName() + ": " + item` to `matches`.
-8. After the scan is complete, either:
-   - Display `No items found matching keyword: ...` if `matches` is empty, or
-   - Display dividers, a heading, and the numbered list of matching items.
-
-The key comparison logic is:
-
-```java
-if (item.getName().toLowerCase().contains(keywordInput.toLowerCase())) {
-    matches.add(category.getName() + ": " + item);
-}
-```
-
-This means the search is case-insensitive and supports partial matches. A keyword like `apple`
-matches `apple`, `pineapple`, and `apple_juice`.
-
-#### Why the feature is implemented this way
-
-The most important design choice in this feature is that the command performs a full scan of the
-inventory using case-insensitive substring matching instead of relying on exact-name matching or
-a precomputed index.
-
-This was chosen for three reasons.
-
-First, substring matching is more practical for real-world use. Users often remember only part of an
-item name, and exact matching would miss items like `pineapple` when searching for `apple`.
-
-Second, it keeps the implementation simple. The inventory is already organised by category, and each
-category stores its own list of items. A linear scan through this existing structure avoids adding
-new state that must be maintained whenever items are added or removed.
-
-Third, the expected inventory size is modest. A linear scan is acceptable for the current scale of
-the application.
-
-Another deliberate design choice is that keyword matching operates across all categories rather than
-within a single category. This makes the feature more useful because users searching by keyword
-typically do not know which category the item belongs to.
-
-#### Error handling and validation
-
-Input validation is handled mainly by `FindItemParser`.
-
-If the user enters `find` with no target, the parser throws a `InventoryDockException` explaining the
-supported find formats.
-
-If the user enters `find keyword/` with no value after the slash, the parser throws a `InventoryDockException`
-for the missing keyword before any command object is created.
-
-At execution time, `FindItemByKeywordCommand` handles the no-match case gracefully by displaying
-`No items found matching keyword: ...` instead of failing.
-
-This makes the feature robust without treating common no-result situations as errors.
-
-#### Alternatives considered
-
-Several alternatives were considered when implementing this feature.
-
-Alternative 1: Support only exact-name matching.
-
-This was rejected because it significantly reduces the usefulness of the search. Users who remember
-only part of an item name would not benefit from the feature.
-
-Alternative 2: Restrict keyword search to a single category at a time.
-
-This was rejected because it weakens the feature. If the user already knows the category, they can
-use `find category/CATEGORY` instead. Keyword search is most valuable when the user does not know
-which category an item belongs to.
-
-Alternative 3: Maintain a separate keyword index.
-
-This was rejected because it introduces extra state that must be synchronised whenever items change.
-The linear scan is sufficient for the expected inventory size.
-
-#### Current limitations
-
-The current implementation has some limitations.
-
-- It performs a full scan of the inventory each time the command is run.
-- It matches only against the item name and does not search other fields such as bin location or
-  brand.
-- Results follow the current category and item order and are not sorted by relevance.
-
-These limitations are acceptable for the current project scope.
-
-#### Possible future improvements
-
-If this feature is extended in future versions, the following improvements could be considered:
-
-- Support searching across multiple item fields such as name, bin location, and brand.
-- Highlight the matching keyword in the output.
-- Sort results by relevance or group them by category.
-- Support multiple keywords in a single search.
 
 ### Update Item Feature
 
@@ -1349,9 +665,21 @@ architecture:
 4. `ListCommand` delegates rendering to `UI.showInventory(inventory)`.
 5. `UI` iterates through the inventory and prints the formatted listing to the user.
 
-The main interaction for this flow is illustrated below.
+The interaction for this flow is split into focused sequence diagrams below.
 
-![ListCommandMainFlow](diagrams/sequence/ListCommandMainFlow-Sequence_Diagram_for_ListCommand__Main_Control_Flow_Only_.png)
+1. Parse routing and category dispatch.
+
+![AddItemCommandParseRoutingFlow](diagrams/sequence/AddItemCommandParseRoutingFlow.png)
+
+2. Fruit parsing and command creation.
+
+![AddItemCommandFruitParsingFlow](diagrams/sequence/AddItemCommandFruitParsingFlow.png)
+
+
+
+3. Execution and result display.
+
+![AddItemCommandExecutionDisplayFlow](diagrams/sequence/AddItemCommandExecutionDisplayFlow.png)
 
 The main structural relationships for this feature are shown below.
 
@@ -2483,3 +1811,21 @@ After setting up the application, proceed to the individual test cases below.
 8. Run `find keyword/mango`.
 9. Verify that the application shows `No items found matching keyword: mango.` when there are no
    matches.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

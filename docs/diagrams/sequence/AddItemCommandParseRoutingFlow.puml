@@ -1,0 +1,62 @@
+@startuml
+title Sequence Diagram for AddItemCommand (Parse Routing and Dispatch)
+
+autonumber
+hide footbox
+
+actor User
+participant ":UI" as UI
+participant ":InventoryDock" as InventoryDock
+participant ":Parser" as Parser
+participant ":AddCommandParser" as AddCommandParser
+participant ":AddItemCommandParser" as AddItemCommandParser
+
+note right of AddCommandParser
+This diagram uses the fruits workflow
+as a representative example.
+The same routing pattern applies
+to other supported categories.
+end note
+
+User -> UI: enter add command
+activate UI
+UI -> InventoryDock: input
+activate InventoryDock
+InventoryDock -> Parser: parse(input)
+activate Parser
+
+Parser -> AddCommandParser: parse(arguments)
+activate AddCommandParser
+AddCommandParser -> AddCommandParser: validateRequiredFields(trimmedInput)
+activate AddCommandParser
+AddCommandParser --> AddCommandParser
+deactivate AddCommandParser
+
+AddCommandParser -> AddCommandParser: extractCategory(trimmedInput)
+activate AddCommandParser
+AddCommandParser --> AddCommandParser: category
+deactivate AddCommandParser
+
+alt category == fruits
+    AddCommandParser -> AddItemCommandParser: handleFruit(trimmedInput)
+    activate AddItemCommandParser
+    AddItemCommandParser --> AddCommandParser: command
+    deactivate AddItemCommandParser
+else other supported category
+    AddCommandParser -> AddItemCommandParser: handleCategory(input)
+    activate AddItemCommandParser
+    AddItemCommandParser --> AddCommandParser: command
+    deactivate AddItemCommandParser
+else else
+    AddCommandParser --> Parser: throw InvalidCommandException("Unknown category: " + category)
+end
+
+AddCommandParser --> Parser: command
+deactivate AddCommandParser
+Parser --> InventoryDock: command
+deactivate Parser
+deactivate InventoryDock
+deactivate UI
+@enduml
+
+

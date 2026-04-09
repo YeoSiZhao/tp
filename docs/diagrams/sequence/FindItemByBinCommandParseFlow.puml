@@ -1,0 +1,41 @@
+@startuml
+title Sequence Diagram for FindItemByBinCommand (Parse and Command Creation)
+
+autonumber
+hide footbox
+
+actor User
+participant ":UI" as UI
+participant ":InventoryDock" as InventoryDock
+participant ":Parser" as Parser
+participant ":FindItemParser" as FindItemParser
+participant ":BinLocationParser" as BinLocationParser
+participant ":FindItemByBinCommand" as FindItemByBinCommand
+
+User -> UI: enter find bin command
+activate UI
+UI -> InventoryDock: input
+activate InventoryDock
+InventoryDock -> Parser: parse(input)
+activate Parser
+
+Parser -> FindItemParser: parse(arguments)
+activate FindItemParser
+FindItemParser -> BinLocationParser: parseSearchInput(name)
+activate BinLocationParser
+BinLocationParser --> FindItemParser: normalizedBinInput
+deactivate BinLocationParser
+
+create FindItemByBinCommand
+FindItemParser -> FindItemByBinCommand: FindItemByBinCommand(normalizedBinInput)
+activate FindItemByBinCommand
+FindItemByBinCommand --> FindItemParser: command
+deactivate FindItemByBinCommand
+
+FindItemParser --> Parser: command
+deactivate FindItemParser
+Parser --> InventoryDock: command
+deactivate Parser
+deactivate InventoryDock
+deactivate UI
+@enduml

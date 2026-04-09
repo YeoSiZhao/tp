@@ -84,7 +84,9 @@ These methods allow the system to correctly parse category-dependent input and c
 
 I added and updated the following UML diagrams:
 
-- `FindItemByQtyCommand_sequence.puml`
+- `FindItemByQtyCommandParseFlow.puml`
+- `FindItemByQtyCommandMatchingFlow.puml`
+- `FindItemByQtyCommandDisplayFlow.puml`
 - `FindItemByQtyCommandObjectDiagram.puml`
 - `FindItemByQtyCommandClassDiagram.puml`
 
