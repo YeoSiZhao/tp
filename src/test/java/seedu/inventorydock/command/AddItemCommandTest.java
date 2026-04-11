@@ -2,6 +2,8 @@ package seedu.inventorydock.command;
 
 import org.junit.jupiter.api.Test;
 import seedu.inventorydock.exception.CategoryNotFoundException;
+
+import seedu.inventorydock.exception.DuplicateItemException;
 import seedu.inventorydock.exception.InventoryDockException;
 import seedu.inventorydock.exception.MissingArgumentException;
 import seedu.inventorydock.model.Category;
@@ -17,11 +19,13 @@ public class AddItemCommandTest {
 
     @Test
     public void execute_validCategoryAndItem_itemAddedAndUiUpdated()
+
             throws InventoryDockException {
+
         Inventory inventory = new Inventory();
         Category fruits = new Category("fruits");
         inventory.addCategory(fruits);
-        Item item = new Item("Apple", 5, "A1", null);
+        Item item = new Item("Apple", 5, "A1", "2026-12-31");
         AddItemCommand command = new AddItemCommand("fruits", item);
         TestUI ui = new TestUI();
 
@@ -38,7 +42,7 @@ public class AddItemCommandTest {
     @Test
     public void execute_missingCategory_throwsException() {
         Inventory inventory = new Inventory();
-        Item item = new Item("Apple", 5, "A1", null);
+        Item item = new Item("Apple", 5, "A1", "2026-12-31");
         AddItemCommand command = new AddItemCommand("fruits", item);
         TestUI ui = new TestUI();
 
@@ -68,7 +72,7 @@ public class AddItemCommandTest {
 
         AddItemCommand command = new AddItemCommand("fruits", new Item("Apple", 5, "B-02", "2026-01-01"));
 
-        InventoryDockException e = assertThrows(InventoryDockException.class,
+        DuplicateItemException e = assertThrows(DuplicateItemException.class,
                 () -> command.execute(inventory, new TestUI()));
         assertEquals("Duplicate item found for category/fruits item/Apple.", e.getMessage());
     }
@@ -102,3 +106,6 @@ public class AddItemCommandTest {
         }
     }
 }
+
+
+

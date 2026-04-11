@@ -2,6 +2,7 @@ package seedu.inventorydock.command;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import seedu.inventorydock.exception.DuplicateItemException;
 import seedu.inventorydock.exception.InventoryDockException;
 import seedu.inventorydock.exception.InvalidCommandException;
 import seedu.inventorydock.model.Category;
@@ -61,7 +62,7 @@ public class UpdateItemCommandTest {
 
         UpdateItemCommand command = new UpdateItemCommand("fruits", 2, updates);
 
-        InventoryDockException exception = assertThrows(InventoryDockException.class,
+        DuplicateItemException exception = assertThrows(DuplicateItemException.class,
                 () -> command.execute(inventory, new UI()));
         assertEquals("Duplicate item found for category/fruits item/apple.", exception.getMessage());
 
@@ -95,3 +96,6 @@ public class UpdateItemCommandTest {
         assertEquals("Quantity must be a positive integer.", exception.getMessage());
     }
 }
+
+
+

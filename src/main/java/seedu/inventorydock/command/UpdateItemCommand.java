@@ -1,6 +1,7 @@
 package seedu.inventorydock.command;
 
 import seedu.inventorydock.exception.CategoryNotFoundException;
+import seedu.inventorydock.exception.DuplicateItemException;
 import seedu.inventorydock.exception.InventoryDockException;
 import seedu.inventorydock.exception.InvalidCommandException;
 import seedu.inventorydock.exception.ItemNotFoundException;
@@ -84,7 +85,7 @@ public class UpdateItemCommand extends Command {
             restoreOriginalValues(item, originalName, originalBin, originalQuantity, originalExpiryDate);
             logger.log(Level.WARNING, "Duplicate item detected while updating category '"
                     + category.getName() + "' and name '" + attemptedName + "'.");
-            throw new InventoryDockException("Duplicate item found for category/" + category.getName()
+            throw new DuplicateItemException("Duplicate item found for category/" + category.getName()
                     + " item/" + attemptedName + ".");
         }
 
@@ -208,3 +209,5 @@ public class UpdateItemCommand extends Command {
         return key.toString().trim();
     }
 }
+
+
