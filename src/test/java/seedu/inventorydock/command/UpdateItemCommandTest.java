@@ -27,7 +27,7 @@ public class UpdateItemCommandTest {
         fruitsCategory = new Category("fruits");
 
         fruitsCategory.addItem(new Fruit("apple", 10, "A-01",
-                "2026-03-20", "small", true));
+                "2026-03-20", true));
 
         inventory.addCategory(fruitsCategory);
     }
@@ -55,7 +55,7 @@ public class UpdateItemCommandTest {
     @Test
     public void execute_updateCreatesDuplicateBatch_throwsExceptionAndRollsBack() {
         fruitsCategory.addItem(new Fruit("apple", 8, "A-08",
-                "2026-05-01", "small", true));
+                "2026-05-01", true));
 
         Map<String, String> updates = new LinkedHashMap<>();
         updates.put("expiryDate", "2026-03-20");
@@ -96,6 +96,8 @@ public class UpdateItemCommandTest {
         assertEquals("Quantity must be a positive integer.", exception.getMessage());
     }
 }
+
+
 
 
 

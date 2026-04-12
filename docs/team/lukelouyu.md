@@ -46,17 +46,10 @@ This improves data organisation and supports a clearer separation of responsibil
 
 I implemented category-specific parsers under `src/main/java/seedu/inventorydock/parser/category` to support parsing and validation of item-type-specific fields:
 
-- `AccessoriesParser.java`
 - `BurgerParser.java`
-- `DrinksParser.java`
-- `FruitParser.java`
 - `IceCreamParser.java`
-- `MeatParser.java`
 - `SetMealParser.java`
-- `SnackParser.java`
 - `SweetsParser.java`
-- `ToiletriesParser.java`
-- `VegetableParser.java`
 
 These parser classes extract category-specific fields from raw user input, validate required values, detect malformed input, and return structured parsed results for item creation. This modularises the parsing logic by keeping category-specific validation separate from the main command parser, improving maintainability and making the application easier to extend with new inventory item types in the future.
 
@@ -89,5 +82,6 @@ These diagrams help document the design and interaction flow of the feature more
 ## Improved code quality and maintainability
 
 In addition to implementation work, I contributed to improving the overall quality of the codebase through testing, JavaDocs, and style-related fixes. This helped ensure that the new inventory features were easier to understand, easier to maintain, and better aligned with project coding standards.
+
 
 

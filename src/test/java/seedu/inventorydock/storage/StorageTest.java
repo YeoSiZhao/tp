@@ -54,19 +54,19 @@ public class StorageTest {
 
         inventory.findCategoryByName("fruits").addItem(
                 new Fruit("apple", 3, "A-10",
-                        "2026-03-20", "medium", true)
+                        "2026-03-20", true)
         );
         inventory.findCategoryByName("vegetables").addItem(
                 new Vegetable("spinach", 4, "V-01",
-                        "2026-03-18", "Malaysia", true)
+                        "2026-03-18", true)
         );
         inventory.findCategoryByName("snacks").addItem(
                 new Snack("chips", 6, "S-07",
-                        "2026-06-01", "lays", true)
+                        "2026-06-01", true)
         );
         inventory.findCategoryByName("toiletries").addItem(
                 new Toiletries("shampoo", 2, "T-03",
-                        "2026-06-01", "Dove", true)
+                        "2026-06-01", true)
         );
         storage.save(inventory);
 
@@ -99,10 +99,10 @@ public class StorageTest {
         Storage storage = new Storage(FILE_PATH);
 
         List<String> lines = List.of(
-                "category/fruits item/apple bin/A-10 qty/3 expiryDate/2026-03-20 size/medium isRipe/true",
-                "category/vegetables item/spinach bin/V-01 qty/4 expiryDate/2026-03-18 origin/Malaysia isLeafy/true",
+                "category/fruits item/apple bin/A-10 qty/3 expiryDate/2026-03-20 isRipe/true",
+                "category/vegetables item/spinach bin/V-01 qty/4 expiryDate/2026-03-18 isLeafy/true",
                 "Corrupted line.",
-                "category/snacks item/chips bin/S-07 qty/6 expiryDate/2026-06-01 brand/lays isCrunchy/true"
+                "category/snacks item/chips bin/S-07 qty/6 expiryDate/2026-06-01 isCrunchy/true"
         );
 
         Files.write(Path.of(FILE_PATH), lines);
@@ -128,4 +128,6 @@ public class StorageTest {
                 inventory.findCategoryByName("toiletries").getItemCount());
     }
 }
+
+
 

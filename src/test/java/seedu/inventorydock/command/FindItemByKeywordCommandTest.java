@@ -28,16 +28,11 @@ public class FindItemByKeywordCommandTest {
         snacksCategory = new Category("snacks");
         drinksCategory = new Category("drinks");
 
-        fruitsCategory.addItem(new Fruit("apple", 40, "A-10",
-                "2026-10-03", "big", true));
-        fruitsCategory.addItem(new Fruit("pineapple", 10, "A-11",
-                "2026-10-03", "big", false));
-        fruitsCategory.addItem(new Fruit("banana", 30, "B-10",
-                "2026-10-03", "small", true));
-        snacksCategory.addItem(new Snack("chips", 50, "D-05",
-                "2026-10-03", "Lays", true));
-        drinksCategory.addItem(new Drinks("apple_juice", 24, "F-01",
-                "2026-10-03", "Marigold", true));
+        fruitsCategory.addItem(new Fruit("apple", 40, "A-10", "2026-10-03", true));
+        fruitsCategory.addItem(new Fruit("pineapple", 10, "A-11", "2026-10-03", false));
+        fruitsCategory.addItem(new Fruit("banana", 30, "B-10", "2026-10-03", true));
+        snacksCategory.addItem(new Snack("chips", 50, "D-05", "2026-10-03", true));
+        drinksCategory.addItem(new Drinks("apple_juice", 24, "F-01", "2026-10-03", true));
 
         inventory.addCategory(fruitsCategory);
         inventory.addCategory(snacksCategory);
@@ -154,6 +149,3 @@ public class FindItemByKeywordCommandTest {
         }
     }
 }
-
-
-

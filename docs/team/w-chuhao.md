@@ -16,17 +16,17 @@ My main contributions focused on inventory creation and retrieval workflows. I i
 
 #### 1. Add item command and parsing support
 
-I implemented the core `add` command flow so that users can add inventory items into an existing category using a structured command format. This work included both the command execution logic and the parser pipeline needed to validate common fields, dispatch by category, construct the correct item subtype, and throw or propagate exceptions when invalid input or category errors were encountered.
+I implemented the core `add` command flow so that users can add inventory items into an existing category using a structured command format. This work included both the command execution logic and the parser pipeline needed to validate common fields, dispatch by category, construct the correct item subtype, detect duplicate logical batches, and throw or propagate exceptions when invalid input, duplicate input, or category errors were encountered.
 
 Key aspects of the implementation:
 
-- Added `AddItemCommand` to insert parsed items into the target category.
-- Extended `Parser`, `AddCommandParser`, and `AddItemCommandParser` to support command recognition, validation, and category-based parsing.
+- Added `AddItemCommand` to insert parsed items into the target category and reject duplicate logical batches during execution.
+- Extended `Parser`, `AddCommandParser`, and `AddItemCommandParser` to support command recognition, validation, category-based parsing, and duplicate-aware item creation.
 - Helped establish the separation between parsing logic and command execution logic, keeping the implementation consistent with the project's command-based architecture.
-- Included exception handling paths so invalid add-command input and category-related errors could be surfaced clearly instead of failing silently.
+- Included exception handling paths so invalid add-command input, duplicate logical batches, and category-related errors could be surfaced clearly instead of failing silently.
 - Added JUnit coverage for add-command behaviour and parser handling.
 
-This contribution is significant because `add` is one of the product's core write operations. It required coordinating input validation, item construction, category lookup, and error handling across multiple classes.
+This contribution is significant because `add` is one of the product's core write operations. It required coordinating input validation, item construction, category lookup, duplicate-batch detection, and error handling across multiple classes.
 
 Representative PRs:
 
@@ -139,7 +139,7 @@ My contributions covered:
 I also added and updated the UML diagrams used to support these Developer Guide sections. These diagrams document both the dynamic execution flow and the static relationships behind the features I implemented.
 
 Sequence diagrams I contributed:
-- [AddItemCommandParseRoutingFlow.puml](../diagrams/sequence/AddItemCommandParseRoutingFlow.puml)`r`n- [AddItemCommandFruitParsingFlow.puml](../diagrams/sequence/AddItemCommandFruitParsingFlow.puml)`r`n- [AddItemCommandExecutionDisplayFlow.puml](../diagrams/sequence/AddItemCommandExecutionDisplayFlow.puml)
+- [AddItemCommandParseRoutingFlow.puml](../diagrams/sequence/AddItemCommandParseRoutingFlow.puml)`r`n- [AddItemCommandSingleCategoryParsingFlow.puml](../diagrams/sequence/AddItemCommandSingleCategoryParsingFlow.puml)`r`n- [AddItemCommandExecutionDisplayFlow.puml](../diagrams/sequence/AddItemCommandExecutionDisplayFlow.puml)
 - [ListCommandParseFlow.puml](../diagrams/sequence/ListCommandParseFlow.puml)`r`n- [ListCommandTraversalFlow.puml](../diagrams/sequence/ListCommandTraversalFlow.puml)`r`n- [ListCommandDisplayFlow.puml](../diagrams/sequence/ListCommandDisplayFlow.puml)
 - [FindItemByCategoryCommandParseFlow.puml](../diagrams/sequence/FindItemByCategoryCommandParseFlow.puml)`r`n- [FindItemByCategoryCommandMatchingFlow.puml](../diagrams/sequence/FindItemByCategoryCommandMatchingFlow.puml)`r`n- [FindItemByCategoryCommandDisplayFlow.puml](../diagrams/sequence/FindItemByCategoryCommandDisplayFlow.puml)
 - [FindItemByBinCommandMainFlow.puml](../diagrams/sequence/FindItemByBinCommandMainFlow.puml)
@@ -175,5 +175,7 @@ I also updated the diagram set later to keep the generated documentation consist
 - [#57](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/57) Commented on the logging feature changes during team integration.
 - [#63](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/63) Helped refine the design of newly added item categories by pushing for a more consistent data model across item types.
 - [#86](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/86) Reviewed parsing improvements and suggested ways to keep item-field design more consistent for future iterations.
+
+
 
 

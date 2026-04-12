@@ -1,5 +1,5 @@
 @startuml
-title Sequence Diagram for AddItemCommand (Fruit Parsing and Command Creation)
+title Sequence Diagram for AddItemCommand (Single-Category Parsing and Command Creation)
 
 autonumber
 hide footbox
@@ -8,8 +8,7 @@ participant ":AddCommandParser" as AddCommandParser
 participant ":AddItemCommandParser" as AddItemCommandParser
 participant ":InputValidator" as InputValidator
 participant ":CommonFieldParser" as CommonFieldParser
-participant ":FruitParser" as FruitParser
-participant ":SpecificFieldValidator" as SpecificFieldValidator
+participant ":BooleanFieldParser" as BooleanFieldParser
 
 AddCommandParser -> AddItemCommandParser: handleFruit(trimmedInput)
 activate AddItemCommandParser
@@ -19,19 +18,15 @@ activate InputValidator
 InputValidator --> AddItemCommandParser
 deactivate InputValidator
 
-AddItemCommandParser -> CommonFieldParser: parse(input, "size/")
+AddItemCommandParser -> CommonFieldParser: parse(input, "isRipe/")
 activate CommonFieldParser
 CommonFieldParser --> AddItemCommandParser: commonFields
 deactivate CommonFieldParser
 
-AddItemCommandParser -> FruitParser: parse(input)
-activate FruitParser
-FruitParser -> SpecificFieldValidator: parseStringOnlyField(size, "size", "fruit")
-activate SpecificFieldValidator
-SpecificFieldValidator --> FruitParser: validatedSize
-deactivate SpecificFieldValidator
-FruitParser --> AddItemCommandParser: fruitFields
-deactivate FruitParser
+AddItemCommandParser -> BooleanFieldParser: parse(input, "isRipe/")
+activate BooleanFieldParser
+BooleanFieldParser --> AddItemCommandParser: isRipe
+deactivate BooleanFieldParser
 
 create ":AddItemCommand" as AddItemCommand
 AddItemCommandParser -> AddItemCommand: 5 AddItemCommand(categoryName, item)
@@ -42,3 +37,4 @@ deactivate AddItemCommand
 AddItemCommandParser --> AddCommandParser: command
 deactivate AddItemCommandParser
 @enduml
+

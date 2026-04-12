@@ -100,7 +100,7 @@ brand. The add-item flow solves this by routing the same high-level command thro
 parsers based on the category provided by the user.
 
 For example, if the user enters
-`add category/fruits item/apple bin/A1 qty/10 expiryDate/2026-4-01 size/medium isRipe/true`,
+`add category/fruits item/apple bin/A1 qty/10 expiryDate/2026-4-01 isRipe/true`,
 the system validates the common and category-specific fields, constructs the correct `Item`
 subclass, and adds it into the matching category.
 
@@ -111,8 +111,8 @@ application. The feature follows this flow:
 
 1. The user enters an `add` command.
 2. `Parser` recognises the `add` command word and delegates the remaining input to `AddCommandParser`.
-3. `AddCommandParser` validates the required shared fields and determines the target category.
-4. `AddItemCommandParser` dispatches to the category-specific parsing method such as `FruitParser` and constructs the
+4. `AddItemCommandParser` dispatches to the category-specific parsing path, parses the boolean field, and constructs the
+   correct `Item` subtype.
    correct `Item` subtype.
 5. An `AddItemCommand` is created and executed with access to the current `Inventory` and `UI`.
 6. The command finds the target category, rejects duplicate logical batches using a normalized identity key (ignoring `qty/` and `bin/`), then inserts the item and shows a confirmation message.
@@ -123,9 +123,9 @@ Sequence diagrams:
 
 ![AddItemCommandParseRoutingFlow](diagrams/sequence/AddItemCommandParseRoutingFlow.png)
 
-2. Fruit parsing and command creation.
+2. Single-category parsing and command creation.
 
-![AddItemCommandFruitParsingFlow](diagrams/sequence/AddItemCommandFruitParsingFlow.png)
+![AddItemCommandSingleCategoryParsingFlow](diagrams/sequence/AddItemCommandSingleCategoryParsingFlow.png)
 
 3. Command execution and user display.
 
@@ -157,7 +157,7 @@ The feature is mainly implemented using the following classes:
 - `Parser`
 - `AddCommandParser`
 - `AddItemCommandParser`
-- Category-specific parsers such as `FruitParser`
+- `BooleanFieldParser`
 - `AddItemCommand`
 - `Inventory`
 - `Category`
@@ -168,8 +168,8 @@ The responsibilities of these classes are as follows:
 - `Parser` identifies that the user wants to perform an add operation.
 - `AddCommandParser` validates shared required fields and chooses the correct parsing branch based on
   `category/`.
-- `AddItemCommandParser` coordinates common-field parsing and category-specific parsing.
-- Category-specific parsers construct the extra fields required by each concrete `Item` subtype.
+- `AddItemCommandParser` coordinates common-field parsing and boolean-field parsing.
+- `BooleanFieldParser` parses and validates the single boolean field required by each concrete `Item` subtype.
 - `AddItemCommand` performs duplicate-batch checking and insertion into the inventory.
 - `Inventory` finds the matching category by name.
 - `Category` stores the added item.
@@ -177,7 +177,7 @@ The responsibilities of these classes are as follows:
 
 This design intentionally separates shared parsing from category-specific parsing. Common fields such
 as `item/`, `bin/`, `qty/`, and `expiryDate/` can be handled consistently, while subtype-specific
-fields remain encapsulated in the relevant parser and model class.
+the boolean category field remains encapsulated in the relevant parser and model class.
 
 #### Command execution flow
 
@@ -960,11 +960,10 @@ public String toStorageString(String categoryName) {
 ```
 
 Subclasses extend this behaviour by appending their own fields. For example, the `Fruit` class
-adds additional attributes:
+adds its category-specific boolean field:
 ```java
 public String toStorageString(String categoryName) {
     return super.toStorageString(categoryName)
-            + " size/" + size
             + " isRipe/" + isRipe;
 }
 ```
@@ -1187,8 +1186,8 @@ This section provides instructions for manually testing the application.
 
 1. Use the `add` command to insert sample items into different categories.
 2. Example:
-    - `add category/fruits item/apple bin/A1 qty/10 expiryDate/2026-4-01 size/medium isRipe/true`
-    - `add category/drinks item/cola bin/B2 qty/5 expiryDate/2026-6-01 brand/coke isCarbonated/true`
+    - `add category/fruits item/apple bin/A1 qty/10 expiryDate/2026-4-01 isRipe/true`
+    - `add category/drinks item/cola bin/B2 qty/5 expiryDate/2026-6-01 isCarbonated/true`
 3. Run `list` to verify that the items are correctly added.
 
 After setting up the application, proceed to the individual test cases below.
@@ -1196,18 +1195,18 @@ After setting up the application, proceed to the individual test cases below.
 ### Testing add item
 
 1. Ensure the target category already exists in the inventory, for example `fruits`.
-2. Run `add category/fruits item/apple bin/A-1 qty/10 expiryDate/2026-4-01 size/medium isRipe/true`.
+2. Run `add category/fruits item/apple bin/A-1 qty/10 expiryDate/2026-4-01 isRipe/true`.
 3. Verify that the application shows a confirmation message for the added item.
 4. Run `list`.
 5. Verify that `apple` appears under the `fruits` category with the entered values.
-6. Run `add category/unknown item/apple bin/A-1 qty/10 expiryDate/2026-4-01 size/medium isRipe/true`.
+6. Run `add category/unknown item/apple bin/A-1 qty/10 expiryDate/2026-4-01 isRipe/true`.
 7. Verify that the application shows `Category not found: unknown` or the corresponding category error.
-8. Run an add command with a missing required field, for example `add category/fruits bin/A-1 qty/10 expiryDate/2026-4-01 size/medium isRipe/true`.
+8. Run an add command with a missing required field, for example `add category/fruits bin/A-1 qty/10 expiryDate/2026-4-01 isRipe/true`.
 9. Verify that the application shows the appropriate validation error for the missing field.
-10. Run `add category/fruits item/apple bin/B-9 qty/99 expiryDate/2026-4-01 size/medium isRipe/true`.
+10. Run `add category/fruits item/apple bin/B-9 qty/99 expiryDate/2026-4-01 isRipe/true`.
 11. Verify that the application rejects it with `Duplicate item found for category/fruits item/apple.`
 12. Verify through `list` that no second identical batch was added to `fruits`.
-13. Run `add category/fruits item/apple bin/C-1 qty/5 expiryDate/2026-4-02 size/medium isRipe/true`.
+13. Run `add category/fruits item/apple bin/C-1 qty/5 expiryDate/2026-4-02 isRipe/true`.
 14. Verify through `list` that this different batch is allowed and appears under `fruits`.
 
 ### Testing list command
@@ -1294,9 +1293,9 @@ After setting up the application, proceed to the individual test cases below.
 20. Verify that the application shows `Invalid date. Please use yyyy-M-d.`
 21. Run `update category/fruits index/1 bin/`
 22. Verify that the application shows `Invalid update token: bin/`.
-23. Run `update category/fruits index/1 size/large`
+23. Run `update category/fruits index/1 isRipe/false`
 24. Verify that the application shows `Only newItem/, bin/, qty/, and expiryDate/ can be updated.`
-25. Add a second fruits batch first, for example `add category/fruits item/green_apple bin/B1 qty/8 expiryDate/2026-6-1 size/small isRipe/true`.
+25. Add a second fruits batch first, for example `add category/fruits item/green_apple bin/B1 qty/8 expiryDate/2026-6-1 isRipe/true`.
 26. Run `update category/fruits index/2 expiryDate/2026-5-01` if index 1 already has `green_apple` with `2026-5-01` and same category fields.
 27. Verify that the application rejects the update with `Duplicate item found for category/fruits item/green_apple.`
 
@@ -1321,7 +1320,7 @@ After setting up the application, proceed to the individual test cases below.
 2. Exit the application using the `bye` command.
 3. Reopen the application.
 4. Run `list`.
-5. Verify that all items are restored with their correct category specific fields.
+5. Verify that all items are restored with their correct category-specific boolean fields.
 6. Exit the application using the `bye` command.
 7. Modify the storage file so that a line is missing the `category/` field.
 8. Reopen the application.
@@ -1361,6 +1360,12 @@ o` and press enter.
 8. Run `find keyword/mango`.
 9. Verify that the application shows `No items found matching keyword: mango.` when there are no
    matches.
+
+
+
+
+
+
 
 
 
