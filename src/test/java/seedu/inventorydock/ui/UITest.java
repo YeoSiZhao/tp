@@ -77,6 +77,19 @@ public class UITest {
         assertTrue(out.contains("apple"));
     }
 
+    @Test
+    public void showInventory_singleItem_usesSingularGrammar() {
+        UI ui = createUIWithInput("");
+        Inventory inventory = new Inventory();
+        Category cat = new Category("fruits");
+        cat.addItem(new Item("apple", 10, "A-1", null));
+        inventory.addCategory(cat);
+
+        ui.showInventory(inventory);
+
+        assertTrue(output.toString().contains("1. Fruits (1 item)"));
+    }
+
     // ---- showSortedInventory branches ----
 
     @Test
@@ -101,6 +114,29 @@ public class UITest {
         String out = output.toString();
         assertTrue(out.contains("sorted by name"));
         assertTrue(out.contains("apple"));
+    }
+
+    @Test
+    public void showSortedInventory_singleItem_usesSingularGrammar() {
+        UI ui = createUIWithInput("");
+        Inventory inventory = new Inventory();
+        Category cat = new Category("fruits");
+        Item apple = new Item("apple", 10, "A-1", null);
+        cat.addItem(apple);
+        inventory.addCategory(cat);
+
+        ui.showSortedInventory(inventory, List.of(List.of(apple)), "name");
+
+        assertTrue(output.toString().contains("1. Fruits (1 item)"));
+    }
+
+    @Test
+    public void showDeleteCategoryConfirmation_singleItem_usesSingularGrammar() {
+        UI ui = createUIWithInput("");
+
+        ui.showDeleteCategoryConfirmation("fruits", 1);
+
+        assertTrue(output.toString().contains("Category 'fruits' still has 1 item."));
     }
 
     // ---- showItemUpdated branches ----

@@ -79,6 +79,10 @@ public class UI {
         return "Items " + resultsDescription;
     }
 
+    private String formatItemCount(int itemCount) {
+        return itemCount + (itemCount == 1 ? " item" : " items");
+    }
+
     public void showNumberedList(List<?> items) {
         for (int i = 0; i < items.size(); i++) {
             showMessage((i + 1) + ". " + items.get(i));
@@ -146,7 +150,7 @@ public class UI {
     public void showDeleteCategoryConfirmation(
             String categoryName, int itemCount) {
         showDivider();
-        System.out.println("Category '" + categoryName + "' still has " + itemCount + " item(s).");
+        System.out.println("Category '" + categoryName + "' still has " + formatItemCount(itemCount) + ".");
         System.out.println("Are you sure you want to delete " + "all items and remove this category?");
         System.out.print("Type 'yes' to confirm: ");
     }
@@ -171,7 +175,8 @@ public class UI {
         System.out.println();
         for (int i = 0; i < categories.size(); i++) {
             Category cat = categories.get(i);
-            System.out.println((i + 1) + ". " + capitalise(cat.getName()) + " (" + cat.getItemCount() + " items)");
+            System.out.println((i + 1) + ". " + capitalise(cat.getName())
+                    + " (" + formatItemCount(cat.getItemCount()) + ")");
             List<Item> items = cat.getItems();
             for (int j = 0; j < items.size(); j++) {
                 System.out.println("   " + (j + 1) + ". " + items.get(j));
@@ -192,7 +197,8 @@ public class UI {
         System.out.println();
         for (int i = 0; i < categories.size(); i++) {
             Category cat = categories.get(i);
-            System.out.println((i + 1) + ". " + capitalise(cat.getName()) + " (" + cat.getItemCount() + " items)");
+            System.out.println((i + 1) + ". " + capitalise(cat.getName())
+                    + " (" + formatItemCount(cat.getItemCount()) + ")");
             List<Item> items = sortedItemsByCategory.get(i);
             for (int j = 0; j < items.size(); j++) {
                 System.out.println("   " + (j + 1) + ". " + items.get(j));
