@@ -84,9 +84,17 @@ more specific subclasses for clearer intent.
 The hierarchy is split into focused diagrams for each exception group.
 This keeps the inheritance structure visible without forcing every detail into a single figure.
 
-- Parser and input exceptions: `ExceptionHierarchyParserClassDiagram.puml`
-- Inventory lookup exceptions: `ExceptionHierarchyInventoryClassDiagram.puml`
-- Storage exceptions: `ExceptionHierarchyStorageClassDiagram.puml`
+Parser and input exceptions:
+
+![ExceptionHierarchyParserClassDiagram](diagrams/class/ExceptionHierarchyParserClassDiagram.png)
+
+Inventory lookup exceptions:
+
+![ExceptionHierarchyInventoryClassDiagram](diagrams/class/ExceptionHierarchyInventoryClassDiagram.png)
+
+Storage exceptions:
+
+![ExceptionHierarchyStorageClassDiagram](diagrams/class/ExceptionHierarchyStorageClassDiagram.png)
 
 ### Add Item Feature
 
