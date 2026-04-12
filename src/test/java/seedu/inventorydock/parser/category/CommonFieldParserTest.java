@@ -85,9 +85,9 @@ public class CommonFieldParserTest {
 
     @Test
     public void parse_validInput_returnsParsedFields() throws Exception {
-        String input = "category/FRUITS item/apple bin/A-1 qty/10 expiryDate/2026-12-31 size/big isRipe/true";
+        String input = "category/FRUITS item/apple bin/A-1 qty/10 expiryDate/2026-12-31 isRipe/true";
 
-        CommonFieldParser parser = CommonFieldParser.parse(input, "size/");
+        CommonFieldParser parser = CommonFieldParser.parse(input, "isRipe/");
 
         assertEquals("FRUITS", parser.categoryName);
         assertEquals("apple", parser.itemName);
@@ -98,37 +98,37 @@ public class CommonFieldParserTest {
 
     @Test
     public void parse_missingItemName_throwsException() {
-        String input = "category/FRUITS item/ bin/A-1 qty/10 expiryDate/2026-12-31 size/big isRipe/true";
+        String input = "category/FRUITS item/ bin/A-1 qty/10 expiryDate/2026-12-31 isRipe/true";
 
         InventoryDockException e = assertThrows(InventoryDockException.class,
-                () -> CommonFieldParser.parse(input, "size/"));
+                () -> CommonFieldParser.parse(input, "isRipe/"));
         assertEquals("Missing item name.", e.getMessage());
     }
 
     @Test
     public void parse_missingBin_throwsException() {
-        String input = "category/FRUITS item/apple bin/ qty/10 expiryDate/2026-12-31 size/big isRipe/true";
+        String input = "category/FRUITS item/apple bin/ qty/10 expiryDate/2026-12-31 isRipe/true";
 
         InventoryDockException e = assertThrows(InventoryDockException.class,
-                () -> CommonFieldParser.parse(input, "size/"));
+                () -> CommonFieldParser.parse(input, "isRipe/"));
         assertEquals("Missing bin location.", e.getMessage());
     }
 
     @Test
     public void parse_missingQuantity_throwsException() {
-        String input = "category/FRUITS item/apple bin/A-1 qty/ expiryDate/2026-12-31 size/big isRipe/true";
+        String input = "category/FRUITS item/apple bin/A-1 qty/ expiryDate/2026-12-31 isRipe/true";
 
         InventoryDockException e = assertThrows(InventoryDockException.class,
-                () -> CommonFieldParser.parse(input, "size/"));
+                () -> CommonFieldParser.parse(input, "isRipe/"));
         assertEquals("Missing quantity.", e.getMessage());
     }
 
     @Test
     public void parse_invalidExpiryDate_throwsException() {
-        String input = "category/FRUITS item/apple bin/A-1 qty/10 expiryDate/2026-02-30 size/big isRipe/true";
+        String input = "category/FRUITS item/apple bin/A-1 qty/10 expiryDate/2026-02-30 isRipe/true";
 
         InventoryDockException e = assertThrows(InventoryDockException.class,
-                () -> CommonFieldParser.parse(input, "size/"));
+                () -> CommonFieldParser.parse(input, "isRipe/"));
         assertEquals("Invalid date. Please enter a valid calendar date in yyyy-M-d format.", e.getMessage());
     }
 }

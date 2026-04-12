@@ -32,13 +32,13 @@ public class FindItemByExpiryDateCommandTest {
         toiletriesCategory = new Category("toiletries");
 
         fruitsCategory.addItem(new Fruit("apple", 10, "A-1",
-                "2026-3-19", "medium", true));
+                "2026-3-19", true));
         fruitsCategory.addItem(new Fruit("banana", 8, "A-2",
-                "2026-3-25", "small", true));
+                "2026-3-25", true));
         snacksCategory.addItem(new Snack("chips", 20, "B-1",
-                "2026-3-21", "Lays", true));
+                "2026-3-21", true));
         toiletriesCategory.addItem(new Toiletries("shampoo", 5, "C-1",
-                "2026-4-1", "Dove", true));
+                "2026-4-1", true));
         inventory.addCategory(fruitsCategory);
         inventory.addCategory(snacksCategory);
         inventory.addCategory(toiletriesCategory);
@@ -94,7 +94,7 @@ public class FindItemByExpiryDateCommandTest {
     public void execute_vegetableItemsIncludedWhenMatchingDate() throws InvalidDateException {
         Category vegetablesCategory = new Category("vegetables");
         vegetablesCategory.addItem(new Vegetable("spinach", 7, "D-1",
-                "2026-3-20", "Malaysia", true));
+                "2026-3-20", true));
         inventory.addCategory(vegetablesCategory);
 
         FindItemByExpiryDateCommand command = new FindItemByExpiryDateCommand("2026-3-21");
@@ -120,3 +120,5 @@ public class FindItemByExpiryDateCommandTest {
         }
     }
 }
+
+

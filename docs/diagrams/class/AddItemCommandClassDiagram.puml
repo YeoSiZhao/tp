@@ -18,6 +18,10 @@ class AddItemCommandParser {
   + handleDrinks(input: String)
 }
 
+class BooleanFieldParser {
+  + parse(input: String, fieldPrefix: String): boolean
+}
+
 class AddItemCommand {
   - categoryName: String
   - item: Item
@@ -54,12 +58,13 @@ class UI {
 note as N1
   The diagram shows a few representative
   category-specific handlers only.
-  See the Developer Guide text for the
-  full list of supported categories.
+  All handlers share CommonFieldParser
+  plus the shared BooleanFieldParser.
 end note
 
 Command <|-- AddItemCommand
 AddCommandParser ..> AddItemCommandParser : delegates to
+AddItemCommandParser ..> BooleanFieldParser : parses boolean field
 AddItemCommandParser ..> AddItemCommand : creates
 AddItemCommand --> Inventory : looks up category
 AddItemCommand --> Category : duplicate check + add
