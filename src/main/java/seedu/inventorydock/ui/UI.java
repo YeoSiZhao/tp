@@ -16,15 +16,15 @@ public class UI {
 
     private static final String DIVIDER =
             "_________________________________________"
-            + "________________________________"
-            + "________________________________";
+                    + "________________________________"
+                    + "________________________________";
     private static final String LOGO =
             " _____       _____\n"
-            + "|_   _|     |  __ \\\n"
-            + "  | |       | |  | |\n"
-            + "  | |       | |  | |\n"
-            + "  | |   _   | |__| |\n"
-            + "|_____||_|  |_____/\n";
+                    + "|_   _|     |  __ \\\n"
+                    + "  | |       | |  | |\n"
+                    + "  | |       | |  | |\n"
+                    + "  | |   _   | |__| |\n"
+                    + "|_____||_|  |_____/\n";
 
     private final Scanner scanner;
 
@@ -133,23 +133,30 @@ public class UI {
         showDivider();
     }
 
-    public void showCategoryDeleted(String categoryName) {
+    public void showCategoryCleared(String categoryName) {
         showDivider();
-        System.out.println("Deleted category: " + categoryName);
+        System.out.println("Cleared category: " + categoryName);
         showDivider();
     }
 
-    public void showDeleteCategoryConfirmation(
+    public void showClearCategoryConfirmation(
             String categoryName, int itemCount) {
         showDivider();
         System.out.println("Category '" + categoryName + "' still has " + formatItemCount(itemCount) + ".");
-        System.out.println("Are you sure you want to delete " + "all items and remove this category?");
+        System.out.println("Are you sure you want to clear all items from this category?");
         System.out.print("Type 'yes' to confirm: ");
     }
 
-    public void showDeleteCategoryCancelled(
+    public void showClearCategoryCancelled(
             String categoryName) {
-        System.out.println("Cancelled. Category '" + categoryName + "' was not deleted.");
+        System.out.println("Cancelled. Category '" + categoryName + "' was not cleared.");
+        showDivider();
+    }
+
+    public void showCategoryAlreadyEmpty(String categoryName) {
+        showDivider();
+        System.out.println("Category '" + categoryName + "' is already empty. Nothing to clear.");
+        showDivider();
     }
 
     public void showCategoryItemsCleared(String categoryName) {
@@ -208,7 +215,7 @@ public class UI {
 
     public void showHelp() {
         showDivider();
-        System.out.println("Available commands: " + "add, delete, update, find, list, help, bye");
+        System.out.println("Available commands: " + "add, delete, clear, update, find, list, help, bye");
         System.out.println();
         System.out.println("For detailed usage and examples, " + "refer to our User Guide:");
         System.out.println("https://ay2425s2-cs2113-w09-2.github.io/tp/UserGuide.html");
