@@ -784,19 +784,19 @@ message instead of failing.
 
 ### Summary Feature
 
-The product also supports displaying a category-based summary of the current inventory using the `summary` command. 
+The product also supports displaying a category based summary of the current inventory using the `summary` command. 
 This feature is useful when the user wants a quicker overview of important inventory information. 
 Instead of showing every item directly, the command summarises each category using item count, lowest stock, and 
 earliest expiry date.
 
 The feature supports three command forms:
-* `summary` which displays both tied lowest-stock items and tied earliest-expiry items for each category.
-* `summary stock` which displays only the tied lowest-stock items for each category.
-* `summary expirydate` which displays only the tied earliest-expiry items for each category.
+* `summary` which displays both tied lowest stock items and tied earliest expiry items for each category.
+* `summary stock` which displays only the tied lowest stock items for each category.
+* `summary expirydate` which displays only the tied earliest expiry items for each category.
 
 #### High-level design
 
-At a high level, this feature fits into the same command-based architecture used throughout the application. The flow is as follows:
+At a high level, this feature fits into the same command based architecture used throughout the application. The flow is as follows:
 
 1. The user enters a `summary` command with an optional mode.
 2. `Parser` recognises the command word and delegates the argument to `SummaryCommandParser`.
@@ -814,9 +814,8 @@ The feature is mainly implemented using the following classes: `Parser`, `Summar
 `Inventory`, `Category`, `Item`, `DateParser`, `UI`.
 
 For stock summary, the command finds the minimum quantity in each category and collects all items tied at that value. 
-For expiry-date summary, the command parses item expiry dates using `DateParser`, determines the earliest valid date 
-in each category, and collects all items tied at that date. Items with invalid or missing expiry dates are ignored for 
-this calculation.
+For expiry date summary, the command parses item expiry dates using `DateParser`, determines the earliest valid date 
+in each category, and collects all items tied at that date.
 
 #### Why the feature is implemented this way
 
@@ -833,8 +832,8 @@ When the user enters a summary command, the implementation performs the followin
 2. `SummaryCommandParser` validates the mode and creates a `SummaryCommand`.
 3. `SummaryCommand.execute()` retrieves the categories from `Inventory`.
 4. For each category, the command collects the relevant items based on the selected summary mode:
-    * tied lowest-stock items for `summary stock`
-    * tied earliest-expiry items for `summary expirydate`
+    * tied lowest stock items for `summary stock`
+    * tied earliest expiry items for `summary expirydate`
     * both groups for `summary`
 5. `SummaryCommand` passes the prepared summary data to `UI`.
 6. `UI` formats and displays the summary view.
@@ -863,7 +862,7 @@ together with the reason the line was skipped.
 
 The main structural relationships for the storage feature are shown below.
 
-![StorageClassDiagram](diagrams/class/StorageClass.png)
+![StorageClassDiagram](diagrams/class/StorageClassDiagram.png)
 
 #### Saving execution flow
 
@@ -1051,7 +1050,8 @@ After setting up the application, proceed to the individual test cases below.
 5. Verify that `apple` appears under the `fruits` category with the entered values.
 6. Run `add category/unknown item/apple bin/A-1 qty/10 expiryDate/2026-4-01 isRipe/true`.
 7. Verify that the application shows a `Invalid input` error for the invalid category.
-8. Run an add command with a missing required field, for example `add category/fruits bin/A-1 qty/10 expiryDate/2026-4-01 isRipe/true`.
+8. Run an add command with a missing required field, for example:
+   - `add category/fruits bin/A-1 qty/10 expiryDate/2026-4-01 isRipe/true`.
 9. Verify that the application shows a `Missing input` error for the missing field.
 10. Run `add category/fruits item/apple bin/B-9 qty/99 expiryDate/2026-4-01 isRipe/true`.
 11. Verify that the application rejects it with a `Conflict` error for a duplicate logical batch.
