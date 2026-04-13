@@ -139,9 +139,27 @@ My contributions covered:
 I also added and updated the UML diagrams used to support these Developer Guide sections. These diagrams document both the dynamic execution flow and the static relationships behind the features I implemented.
 
 Diagram files I contributed:
-- Sequence diagrams: `AddItemCommandParseRoutingFlow`, `AddItemCommandSingleCategoryParsingFlow`, `AddItemCommandExecutionDisplayFlow`, `ListCommandParseFlow`, `ListCommandTraversalFlow`, `ListCommandDisplayFlow`, `FindItemByCategoryCommandParseFlow`, `FindItemByCategoryCommandMatchingFlow`, `FindItemByCategoryCommandDisplayFlow`, `FindItemByBinCommandMainFlow`
-- Class diagrams: `AddItemCommandClassDiagram`, `ListCommandClassDiagram`, `FindItemByCategoryCommandClassDiagram`, `FindItemByBinCommandClassDiagram`
-- Object diagrams: `AddItemCommandObjectDiagram`, `ListCommandObjectDiagram`, `FindItemByCategoryCommandObjectDiagram`, `FindItemByBinCommandObjectDiagram`
+- Sequence diagrams:
+- [AddItemCommandParseRoutingFlow](../diagrams/sequence/AddItemCommandParseRoutingFlow.png)
+- [AddItemCommandSingleCategoryParsingFlow](../diagrams/sequence/AddItemCommandSingleCategoryParsingFlow.png)
+- [AddItemCommandExecutionDisplayFlow](../diagrams/sequence/AddItemCommandExecutionDisplayFlow.png)
+- [ListCommandParseFlow](../diagrams/sequence/ListCommandParseFlow.png)
+- [ListCommandTraversalFlow](../diagrams/sequence/ListCommandTraversalFlow.png)
+- [ListCommandDisplayFlow](../diagrams/sequence/ListCommandDisplayFlow.png)
+- [FindItemByCategoryCommandParseFlow](../diagrams/sequence/FindItemByCategoryCommandParseFlow.png)
+- [FindItemByCategoryCommandMatchingFlow](../diagrams/sequence/FindItemByCategoryCommandMatchingFlow.png)
+- [FindItemByCategoryCommandDisplayFlow](../diagrams/sequence/FindItemByCategoryCommandDisplayFlow.png)
+- [FindItemByBinCommandMainFlow](../diagrams/sequence/FindItemByBinCommandMainFlow.png)
+- Class diagrams:
+- [AddItemCommandClassDiagram](../diagrams/class/AddItemCommandClassDiagram.png)
+- [ListCommandClassDiagram](../diagrams/class/ListCommandClassDiagram.png)
+- [FindItemByCategoryCommandClassDiagram](../diagrams/class/FindItemByCategoryCommandClassDiagram.png)
+- [FindItemByBinCommandClassDiagram](../diagrams/class/FindItemByBinCommandClassDiagram.png)
+- Object diagrams:
+- [AddItemCommandObjectDiagram](../diagrams/object/AddItemCommandObjectDiagram.png)
+- [ListCommandObjectDiagram](../diagrams/object/ListCommandObjectDiagram.png)
+- [FindItemByCategoryCommandObjectDiagram](../diagrams/object/FindItemByCategoryCommandObjectDiagram.png)
+- [FindItemByBinCommandObjectDiagram](../diagrams/object/FindItemByBinCommandObjectDiagram.png)
 
 
 ### Contributions to Team-Based Tasks
