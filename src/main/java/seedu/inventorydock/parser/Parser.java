@@ -4,6 +4,7 @@ import seedu.inventorydock.command.Command;
 import seedu.inventorydock.command.ExitCommand;
 import seedu.inventorydock.command.HelpCommand;
 import seedu.inventorydock.command.ListCommand;
+import seedu.inventorydock.command.SummaryCommand;
 import seedu.inventorydock.exception.InventoryDockException;
 import seedu.inventorydock.exception.InvalidCommandException;
 
@@ -35,6 +36,8 @@ public class Parser {
             return new SortCommandParser().parse(arguments);
         case "list":
             return new ListCommand();
+        case "summary":
+            return new SummaryCommandParser().parse(arguments);
         case "help":
             return new HelpCommand();
         case "bye":

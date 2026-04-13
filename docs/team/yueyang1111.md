@@ -36,6 +36,12 @@ tracking of items by quantity, expiry date, and bin location.
     - Highlights: Implemented `SortCommandParser`, added validation for supported sort types (`name`, `expirydate`, `qty`), provided clear error messages for missing or invalid sort types, and integrated the parser with the existing command architecture.
     - Representative PR: [#119](https://github.com/AY2526S2-CS2113-W09-2/tp/pull/119)
 
+- **New Feature**: Added summary support for category-based inventory overview.
+  - What it does: Supports the `summary`, `summary stock`, and `summary expirydate` commands so users can quickly review each category by item count, tied lowest-stock items, and tied earliest-expiry items.
+  - Justification: This improves usability by giving users a faster way to identify categories that may need attention without scanning the full inventory listing.
+  - Highlights: Implemented `SummaryCommand` and `SummaryCommandParser`; added support for multiple summary modes; preserved category-local item indices in the displayed results; handled tied lowest-stock and earliest-expiry items; and added `N/A` handling for empty categories or categories without matching items.
+  - Representative PR: 
+
 ### Contributions to Team-Based Tasks
 
 1. Helped improve project reliability by refining core infrastructure such as exception handling, storage, and logging.
@@ -60,19 +66,20 @@ For the User Guide I wrote the sections for the following:
 
 - [Storage feature](../UserGuide.md#data-storage)
 - [Sorting feature](../UserGuide.md#sorting-items-sort)
+- [Summary feature](../UserGuide.md#viewing-inventory-summary-summary)
 
-These updates covered storage and data persistence behaviour, sorting command usage, supported sort types, 
+These updates covered storage and data persistence behaviour, sorting command usage, supported sort types, summary command usage,
 expected behaviour, and invalid-input handling.
 
 ### Contributions to the Developer Guide
 
-As for the Developer Guide, I wrote sections for `Storage` and `Sorting`, detailing the implementation details, 
+As for the Developer Guide, I wrote sections for `Storage`, `Summary` and `Sorting`, detailing the implementation details, 
 design rationale, component interaction and control flow, handling of invalid or malformed input, limitations, 
 future improvements, and manual testing considerations.
 
 I also contributed to non-technical documentation sections such as the overall project description, product scope, and user stories.
 
 Diagram files I contributed:
-- Class diagrams: [ArchitectureDiagram](../diagrams/ArchitectureDiagram.png), [SortingClassDiagram](../diagrams/class/SortingClassDiagram.png), [StorageClassDiagram](../diagrams/class/StorageClass.png)
-- Object diagrams: [SortingObjectDiagram](../diagrams/object/SortingObjectDiagram.png), [StorageLoadingObjectDiagram](../diagrams/object/StorageLoadingObjectDiagram.png), [StorageSavingObjectDiagram](../diagrams/object/StorageSavingObjectDiagram.png)
-- Sequence diagrams: [SortCommandDisplayFlow](../diagrams/sequence/SortCommandDisplayFlow.png), [SortCommandParseFlow](../diagrams/sequence/SortCommandParseFlow.png), [SortCommandSortingFlow](../diagrams/sequence/SortCommandSortingFlow.png), [StorageLoadingMainFlow](../diagrams/sequence/StorageLoadingMainFlow.png), [StorageSavingMainFlow](../diagrams/sequence/StorageSavingMainFlow.png)
+- Class diagrams: [ArchitectureDiagram](../diagrams/ArchitectureDiagram.png), [SortingClassDiagram](../diagrams/class/SortingClassDiagram.png), [StorageClassDiagram](../diagrams/class/StorageClass.png), [SummaryCommandClassDiagram](../diagrams/class/SummaryClassDiagram.png)
+- Object diagrams: [SortingObjectDiagram](../diagrams/object/SortingObjectDiagram.png)
+- Sequence diagrams: [SortCommandDisplayFlow](../diagrams/sequence/SortCommandDisplayFlow.png), [SortCommandParseFlow](../diagrams/sequence/SortCommandParseFlow.png), [SortCommandSortingFlow](../diagrams/sequence/SortCommandSortingFlow.png), [StorageLoadingMainFlow](../diagrams/sequence/StorageLoadingMainFlow.png), [StorageSavingMainFlow](../diagrams/sequence/StorageSavingMainFlow.png), [SummaryCommandMainFlow](../diagrams/sequence/SummaryCommandMainFlow.png)
