@@ -133,7 +133,7 @@ Sequence diagrams:
 
 ![AddItemCommandParseRoutingFlow](diagrams/sequence/AddItemCommandParseRoutingFlow.png)
 
-2. Command execution and error handling. This is the second diagram and continues after Diagram 1 returns an `AddItemCommand` to `InventoryDock`.
+2. Command execution and error handling. This is the second diagram and continues after Diagram 1 returns an `AddItemCommand` to `InventoryDock`, while preserving the outer `UI -> InventoryDock` call chain from the first diagram.
 
 ![AddItemCommandExecutionDisplayFlow](diagrams/sequence/AddItemCommandExecutionDisplayFlow.png)
 
@@ -1224,6 +1224,7 @@ After setting up the application, proceed to the individual test cases below.
 10. Verify that the application shows `N/A` for the corresponding summary fields.
 11. Run `summary invalidType`. 
 12. Verify that the application shows the appropriate invalid summary type error message.
+
 
 
 
