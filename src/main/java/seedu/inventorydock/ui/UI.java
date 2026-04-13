@@ -133,7 +133,6 @@ public class UI {
         if (!oldItemName.equals(newItemName)) {
             System.out.println("New item name: " + newItemName);
         }
-        showDivider();
     }
 
     public void showCategoryCleared(String categoryName) {
