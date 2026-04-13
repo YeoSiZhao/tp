@@ -4,7 +4,6 @@ import seedu.inventorydock.command.Command;
 import seedu.inventorydock.command.ExitCommand;
 import seedu.inventorydock.command.HelpCommand;
 import seedu.inventorydock.command.ListCommand;
-import seedu.inventorydock.command.SummaryCommand;
 import seedu.inventorydock.exception.InventoryDockException;
 import seedu.inventorydock.exception.InvalidCommandException;
 

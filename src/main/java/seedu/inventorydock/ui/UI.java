@@ -236,11 +236,14 @@ public class UI {
     }
 
     private String formatSummaryHeader(SummaryCommand.SummaryType summaryType) {
-        return switch (summaryType) {
-            case STOCK -> "Inventory Summary (lowest stock):";
-            case EXPIRYDATE -> "Inventory Summary (earliest expiry):";
-            default -> "Inventory Summary:";
-        };
+        switch (summaryType) {
+        case STOCK:
+            return "Inventory Summary (lowest stock):";
+        case EXPIRYDATE:
+            return "Inventory Summary (earliest expiry):";
+        default:
+            return "Inventory Summary:";
+        }
     }
 
     private void printIndexedItems(List<SummaryCommand.IndexedItem> indexedItems) {

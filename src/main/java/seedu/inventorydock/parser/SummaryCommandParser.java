@@ -22,12 +22,15 @@ public class SummaryCommandParser {
             return new SummaryCommand(SummaryCommand.SummaryType.ALL);
         }
 
-        return switch (trimmed.toLowerCase()) {
-            case "stock" -> new SummaryCommand(SummaryCommand.SummaryType.STOCK);
-            case "expirydate" -> new SummaryCommand(SummaryCommand.SummaryType.EXPIRYDATE);
-            default -> throw new InvalidCommandException(
+        switch (trimmed.toLowerCase()) {
+        case "stock":
+            return new SummaryCommand(SummaryCommand.SummaryType.STOCK);
+        case "expirydate":
+            return new SummaryCommand(SummaryCommand.SummaryType.EXPIRYDATE);
+        default:
+            throw new InvalidCommandException(
                     "summary only supports 'summary', 'summary stock' or 'summary expirydate'."
             );
-        };
+        }
     }
 }
