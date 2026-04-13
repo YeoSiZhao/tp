@@ -75,7 +75,7 @@ existing components.
 The overall architecture of the application is shown below.
 
 <p align="center">
-  <img src="diagrams/ArchitectureDiagram.png" width="500">
+  <img src="diagrams/ArchitectureDiagram.png" width="200">
 </p>
 
 ### Exception Hierarchy
