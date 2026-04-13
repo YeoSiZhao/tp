@@ -274,7 +274,7 @@ public class UI {
 
     public void showHelp() {
         showDivider();
-        System.out.println("Available commands: " + "add, delete, update, find, sort, summary, list, help, bye");
+        System.out.println("Available commands: " + "add, delete, clear, update, find, sort, summary, list, help, bye");
         System.out.println();
         System.out.println("For detailed usage and examples, " + "refer to our User Guide:");
         System.out.println("https://ay2526s2-cs2113-w09-2.github.io/tp/UserGuide.html");

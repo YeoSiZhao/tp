@@ -735,8 +735,7 @@ A representative object snapshot for this feature is shown below.
 
 The sorting behaviour depends on the user provided sort type.
 
-- 
-ame`: Sorts items alphabetically by item name, ignoring letter case.
+- `Name`: Sorts items alphabetically by item name, ignoring letter case.
 - `expirydate`: Sorts items by expiry date in ascending order, so earlier expiry dates appear first.
 - `qty`: Sorts items by quantity in descending order, so larger quantities appear first.
 
@@ -899,10 +898,14 @@ Command format: `delete category/CATEGORY index/INDEX`
 Removes a single item at the given 1-based index from the specified category. The command looks up the category via `inventory.findCategoryByName(...)`, validates the index range, retrieves the item with `category.getItem(itemIndex - 1)`, removes it with `category.removeItem(...)`, and shows a confirmation message.
 Validation is layered: `DeleteCommandParser` rejects missing fields, non-integer indices, and non-positive integers at parse time. `DeleteItemCommand` catches non-existent categories and out-of-range indices at execution time.
 
-Sequence diagram:
-![DeleteItemCommandMainFlow](diagrams/sequence/DeleteItemCommandMainFlow.png)
+Sequence Diagram:
+
+![DeleteItemCommandParseFlow](diagrams/sequence/DeleteItemCommandParseFlow.png)
+
+![DeleteItemCommandExecutionFlow](diagrams/sequence/DeleteItemCommandExecutionFlow.png)
 
 Class and object diagrams:
+
 ![DeleteItemCommandClassDiagram](diagrams/class/DeleteItemCommandClassDiagram.png)
 ![DeleteItemCommandObjectDiagram](diagrams/object/DeleteItemCommandObjectDiagram.png)
 
@@ -935,10 +938,14 @@ ui.showCategoryItemsCleared(categoryName);
 ui.showCategoryCleared(categoryName);
 ```
 
-Sequence diagram:
-![ClearCategoryCommandMainFlow](diagrams/sequence/ClearCategoryCommandMainFlow.png)
+Sequence Diagram:
+
+![ClearCategoryCommandParseFlow](diagrams/sequence/ClearCategoryCommandParseFlow.png)
+
+![ClearCategoryCommandExecutionFlow](diagrams/sequence/ClearCategoryCommandExecutionFlow.png)
 
 Class and object diagrams:
+
 ![ClearCategoryCommandClassDiagram](diagrams/class/ClearCategoryCommandClassDiagram.png)
 ![ClearCategoryCommandObjectDiagram](diagrams/object/ClearCategoryCommandObjectDiagram.png)
 
@@ -956,9 +963,11 @@ Displays a summary of available commands and a link to the User Guide. The comma
 This design keeps help output concise and avoids duplicating detailed usage that already exists in the User Guide. The command summary is currently hard-coded in `UI.showHelp()`.
 
 Sequence diagram:
+
 ![HelpCommandMainFlow](diagrams/sequence/HelpCommandMainFlow.png)
 
 Class and object diagrams:
+
 ![HelpCommandClassDiagram](diagrams/class/HelpCommandClassDiagram.png)
 ![HelpCommandObjectDiagram](diagrams/object/HelpCommandObjectDiagram.png)
 
