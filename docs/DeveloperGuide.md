@@ -1102,7 +1102,7 @@ Class and object diagrams:
   <img src="diagrams/object/HelpCommandObjectDiagram.png" width="200">
 </p>
 
-A possible future improvement is supporting `help COMMAND` to show detailed usage for a specific command.
+<div style="page-break-before: always;"></div>
 
 ## Product scope
 ### Target user profile
