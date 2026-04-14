@@ -26,7 +26,7 @@
 4. [User Stories](#user-stories)
 5. [Non-Functional Requirements](#non-functional-requirements)
 6. [Glossary](#glossary)
-7. [Instruction for Manual Testing](#instructions-for-manual-testing)
+7. [Instructions for Manual Testing](#instructions-for-manual-testing)
    - [Add Item](#testing-add-item)
    - [List Item](#testing-list-command)
    - [Find by Bin](#testing-find-by-bin)
@@ -43,11 +43,10 @@
 
 ---
 
-<div style="page-break-before: always;"></div>
 
 ## Acknowledgements
 
-This project is developed based on the concepts taught in CS2113. The overall architecture were inspired by
+This project is developed based on the concepts taught in CS2113. The overall architecture was inspired by
 the [SE EDU AddressBook Level 3 project](https://se-education.org/addressbook-level3/).
 
 ## Design & implementation
@@ -106,8 +105,6 @@ Storage exceptions:
 <p align="center">
   <img src="diagrams/class/ExceptionHierarchyStorageClassDiagram.png" width="275">
 </p>
-
-<div style="page-break-before: always;"></div>
 
 ### Add Item Feature
 
@@ -290,8 +287,6 @@ and `bin/`) and throws `DuplicateItemException` with
 
 This layered approach ensures invalid input is rejected as early as possible, while still protecting
 the command layer from invalid state.
-
-<div style="page-break-before: always;"></div>
 
 ### Find Feature
 
@@ -490,8 +485,6 @@ Class and object diagrams:
   <img src="diagrams/object/FindItemByKeywordCommandObjectDiagram.png" width="750">
 </p>
 
-<div style="page-break-before: always;"></div>
-
 ### Update Item Feature
 
 Another core feature of the product is the ability to update an existing item in a category using the
@@ -522,7 +515,7 @@ Duplicate check and result reporting:
   <img src="diagrams/sequence/UpdateItemCommandDuplicateCheckFlow.png" width="500">
 </p>
 
-The main structural relationships for this feature are shown below.
+The main structural relationship for this feature are shown below.
 
 <p align="center">
   <img src="diagrams/class/UpdateItemCommandClassDiagram.png" width="850">
@@ -624,12 +617,9 @@ Validation is split across the parser layer and the command layer.
 * invalid quantities  
 * invalid expiry-date values  
 
-This layered design ensures invalid input is rejected early, while still protecting the command layer  
-from invalid runtime state.
+This layered design ensures invalid input is rejected early, while still protecting the command layer from invalid runtime state.
 
 ---
-
-<div style="page-break-before: always;"></div>
 
 ### List Feature
 
@@ -745,8 +735,6 @@ ull`.
 Because the command is read-only and does not parse additional user arguments, there are fewer failure
 modes compared with commands such as `add` or `find`.
 
-<div style="page-break-before: always;"></div>
-
 ### Sort Feature
 
 The product also supports displaying the current inventory with items sorted within each category using 
@@ -800,7 +788,7 @@ When `SortCommand.execute()` is called the implementation performs the following
 1. Assert that `inventory`, `ui` and `sortType` are not 
 ull`.
 2. Retrieve all categories from the `Inventory`.
-3. For each category, make a copy of items item list.
+3. For each category, make a copy of items in item list.
 4. Sort the copied list using the comparator that matches the requested sort type.
 5. Store the sorted lists in the same category order as the original inventory.
 6. Call `ui.showSortedInventory(inventory, sortedItemsByCategory, sortLabel)`.
@@ -884,8 +872,6 @@ such as `name`, `expirydate`, and `qty`.
 At execution time, the command handles an empty inventory gracefully. The UI displays the appropriate empty inventory
 message instead of failing.
 
-<div style="page-break-before: always;"></div>
-
 ### Summary Feature
 
 The product also supports displaying a category based summary of the current inventory using the `summary` command. 
@@ -944,7 +930,7 @@ When the user enters a summary command, the implementation performs the followin
 5. `SummaryCommand` passes the prepared summary data to `UI`.
 6. `UI` formats and displays the summary view.
 
-The main interaction for this flow is illustrated in below.
+The main interaction for this flow is illustrated below.
 
 <p align="center">
   <img src="diagrams/sequence/SummaryCommandMainFlow.png" width="800">
@@ -955,8 +941,6 @@ A representative object snapshot for this feature is shown below.
 <p align="center">
   <img src="diagrams/object/SummaryObjectDiagram.png" width="800">
 </p>
-
-<div style="page-break-before: always;"></div>
 
 ### Storage feature
 
@@ -1016,8 +1000,6 @@ The main interaction for this flow is illustrated in below.
 A simple text-based format is used because it is lightweight, easy to inspect during debugging, and does not require 
 external libraries or database setup. Reusing the existing add-item parsing flow also avoids duplicating parsing 
 logic and helps keep storage behaviour consistent with normal command handling.
-
-<div style="page-break-before: always;"></div>
 
 ### Delete Feature
 
@@ -1137,8 +1119,6 @@ with attributes such as bin location, quantity, and expiry date. It provides fas
 updating, deleting, and searching items, enabling users to quickly locate and manage inventory without navigating 
 complex interfaces.
 
-<div style="page-break-before: always;"></div>
-
 ## User Stories
 
 | Version | As a ... | I want to ...             | So that I can ...                                           |
@@ -1160,8 +1140,6 @@ complex interfaces.
 | v2.0    | user     | view an inventory summary | quickly identify low-stock or early-expiring items in each category |
 
 
-<div style="page-break-before: always;"></div>
-
 ## Non-Functional Requirements
 
 1. The application should run on any system with Java 17 or above installed.
@@ -1180,8 +1158,6 @@ complex interfaces.
 * *Bin* - A physical storage location identifier (e.g., A-10).
 * *Inventory* - The overall collection of categories and items managed by the system.
 * *Command* - A user input instruction that triggers an operation in the application.
-
-<div style="page-break-before: always;"></div>
 
 ## Instructions for manual testing
 
